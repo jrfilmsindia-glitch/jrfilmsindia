@@ -6,13 +6,11 @@ export default function WatchPage({ params }: { params: { id: string } }) {
       <Navbar />
       <div className="pt-20 px-6 md:px-16">
         
-        {/* Video Player */}
         <div className="max-w-2xl mx-auto">
           <div className="aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden flex items-center justify-center">
             <p className="text-gray-500">Video player will load here</p>
           </div>
           
-          {/* Video Info */}
           <div className="mt-6">
             <h1 className="text-white text-2xl font-bold">Video Title</h1>
             <p className="text-amber-500 text-sm mt-1">Category</p>
@@ -21,9 +19,8 @@ export default function WatchPage({ params }: { params: { id: string } }) {
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4 mt-6">
-            <button className="bg-amber-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-amber-400 transition flex items-center gap-2">
+            <button className="bg-amber-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-amber-400 transition">
               ▶ Play
             </button>
             <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">
@@ -35,7 +32,6 @@ export default function WatchPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        {/* Related Videos */}
         <div className="max-w-2xl mx-auto mt-12 mb-8">
           <h2 className="text-white text-xl font-bold mb-4">More Like This</h2>
           <div className="grid grid-cols-3 gap-3">
