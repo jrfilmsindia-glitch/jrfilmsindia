@@ -8,7 +8,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black to-transparent px-6 py-4">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-red-600 text-2xl font-bold tracking-wider">
+        <Link href="/" className="text-amber-500 text-2xl font-bold tracking-wider">
           JR FILMS
         </Link>
         <div className="hidden md:flex items-center gap-6">

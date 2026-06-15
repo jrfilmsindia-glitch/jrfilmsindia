@@ -10,7 +10,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-10" />
         <div className="absolute inset-0 bg-gray-900" />
         <div className="relative z-20 px-6 md:px-16 max-w-2xl">
-          <p className="text-red-600 text-sm font-bold uppercase tracking-widest mb-4">Featured</p>
+          <p className="text-amber-500 text-sm font-bold uppercase tracking-widest mb-4">Featured</p>
           <h1 className="text-white text-4xl md:text-6xl font-bold mb-4 leading-tight">
             JR Films India
           </h1>
@@ -18,9 +18,9 @@ export default function Home() {
             Watch exclusive short films, series and vertical videos from India's best creators.
           </p>
           <div className="flex gap-4">
-            <button className="bg-white text-black font-bold px-8 py-3 rounded-lg hover:bg-gray-200 transition">
-              ▶ Watch Now
-            </button>
+            <button className="bg-amber-500 text-black font-bold px-8 py-3 rounded-lg hover:bg-amber-400 transition">
+  ▶ Watch Now
+</button>
             <button className="bg-gray-700/80 text-white font-bold px-8 py-3 rounded-lg hover:bg-gray-600 transition">
               More Info
             </button>
