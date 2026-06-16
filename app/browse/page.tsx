@@ -1,8 +1,20 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import { createClient } from '@supabase/supabase-js'
 
-export default function BrowsePage() {
-  const categories = ['All', 'Shorts', 'Series', 'Films', 'Behind the Scenes']
+const supabase = createClient(
+  'https://udtjffrethhroxhvnvls.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkdGpmZnJldGhocm94aHZudmxzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTIwMDcxOCwiZXhwIjoyMDk2Nzc2NzE4fQ.rJQKymv9q3ywfIyGER0ZhlyYdoiHB2EK-SpxPZYUFuI'
+)
+
+export default async function BrowsePage() {
+  const { data: videos } = await supabase
+    .from('videos')
+    .select('*')
+    .eq('visibility', 'public')
+    .order('created_at', { ascending: false })
+
+  const categories = ['All', 'Films', 'Series', 'Shorts', 'Songs']
 
   return (
     <main className="min-h-screen bg-black">
@@ -11,29 +23,25 @@ export default function BrowsePage() {
         
         <h1 className="text-white text-3xl font-bold mb-8">Browse</h1>
 
-        {/* Category Filter */}
         <div className="flex gap-3 overflow-x-auto pb-4 mb-8">
           {categories.map((cat) => (
-            <button
-              key={cat}
-              className="flex-shrink-0 px-4 py-2 rounded-full bg-gray-800 text-white text-sm hover:bg-amber-500 hover:text-black transition"
-            >
+            <button key={cat} className="flex-shrink-0 px-4 py-2 rounded-full bg-gray-800 text-white text-sm hover:bg-amber-500 hover:text-black transition">
               {cat}
             </button>
           ))}
         </div>
 
-        {/* Video Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {[1,2,3,4,5,6,7,8,9,10].map((i) => (
-            <Link key={i} href={`/watch/${i}`}>
-              <div className="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-200">
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-gray-600 text-xs">Video {i}</span>
-                </div>
+          {videos?.map((video) => (
+            <Link key={video.id} href={`/watch/${video.id}`}>
+              <div className="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-200 hover:ring-2 ring-amber-500">
+                {video.thumbnail_url
+                  ? <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                  : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
+                }
               </div>
-              <p className="text-white text-sm mt-2 truncate">Video Title {i}</p>
-              <p className="text-amber-500 text-xs mt-1">Shorts</p>
+              <p className="text-white text-sm mt-2 truncate font-medium">{video.title}</p>
+              <p className="text-amber-500 text-xs mt-1 capitalize">{video.category}</p>
             </Link>
           ))}
         </div>

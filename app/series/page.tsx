@@ -1,38 +1,39 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import { createClient } from '@supabase/supabase-js'
 
-export default function SeriesPage() {
-  const series = [
-    { id: 1, title: 'Series 1', episodes: 6, category: 'Drama' },
-    { id: 2, title: 'Series 2', episodes: 4, category: 'Comedy' },
-    { id: 3, title: 'Series 3', episodes: 8, category: 'Thriller' },
-    { id: 4, title: 'Series 4', episodes: 5, category: 'Romance' },
-  ]
+const supabase = createClient(
+  'https://udtjffrethhroxhvnvls.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkdGpmZnJldGhocm94aHZudmxzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTIwMDcxOCwiZXhwIjoyMDk2Nzc2NzE4fQ.rJQKymv9q3ywfIyGER0ZhlyYdoiHB2EK-SpxPZYUFuI'
+)
+
+export default async function SeriesPage() {
+  const { data: videos } = await supabase
+    .from('videos')
+    .select('*')
+    .eq('category', 'series')
+    .eq('visibility', 'public')
+    .order('created_at', { ascending: false })
 
   return (
     <main className="min-h-screen bg-black">
       <Navbar />
       <div className="pt-24 px-6 md:px-16">
-        
         <h1 className="text-white text-3xl font-bold mb-8">Series</h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {series.map((s) => (
-            <Link key={s.id} href={`/watch/${s.id}`}>
-              <div className="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition-transform duration-200">
-                <div className="aspect-video bg-gray-800 flex items-center justify-center">
-                  <span className="text-gray-600 text-sm">{s.title}</span>
-                </div>
-                <div className="p-4">
-                  <h2 className="text-white font-bold text-lg">{s.title}</h2>
-                  <p className="text-amber-500 text-sm mt-1">{s.category}</p>
-                  <p className="text-gray-400 text-sm mt-1">{s.episodes} Episodes</p>
-                </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {videos?.map((video) => (
+            <Link key={video.id} href={`/watch/${video.id}`}>
+              <div className="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-200 hover:ring-2 ring-amber-500">
+                {video.thumbnail_url
+                  ? <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                  : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
+                }
               </div>
+              <p className="text-white text-sm mt-2 truncate font-medium">{video.title}</p>
+              <p className="text-amber-500 text-xs mt-1">Series</p>
             </Link>
           ))}
         </div>
-
       </div>
     </main>
   )
