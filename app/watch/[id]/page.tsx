@@ -1,22 +1,42 @@
 import Navbar from '@/components/Navbar'
+import { supabase } from '@/lib/supabase'
 
-export default function WatchPage({ params }: { params: { id: string } }) {
+export default async function WatchPage({ params }: { params: { id: string } }) {
+  const { data: video } = await supabase
+    .from('videos')
+    .select('*')
+    .eq('id', params.id)
+    .single()
+
+  if (!video) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-white">Video not found</p>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-black">
       <Navbar />
       <div className="pt-20 px-6 md:px-16">
         
-        <div className="max-w-2xl mx-auto">
-          <div className="aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden flex items-center justify-center">
-            <p className="text-gray-500">Video player will load here</p>
+        <div className="max-w-3xl mx-auto">
+          <div className="aspect-video w-full rounded-xl overflow-hidden">
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${video.youtube_id}`}
+              title={video.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
           
           <div className="mt-6">
-            <h1 className="text-white text-2xl font-bold">Video Title</h1>
-            <p className="text-amber-500 text-sm mt-1">Category</p>
-            <p className="text-gray-400 text-sm mt-3 leading-relaxed">
-              Video description will appear here.
-            </p>
+            <h1 className="text-white text-2xl font-bold">{video.title}</h1>
+            <p className="text-amber-500 text-sm mt-1">{video.category}</p>
+            <p className="text-gray-400 text-sm mt-3 leading-relaxed">{video.description}</p>
           </div>
 
           <div className="flex gap-4 mt-6">
@@ -29,21 +49,6 @@ export default function WatchPage({ params }: { params: { id: string } }) {
             <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">
               ↗ Share
             </button>
-          </div>
-        </div>
-
-        <div className="max-w-2xl mx-auto mt-12 mb-8">
-          <h2 className="text-white text-xl font-bold mb-4">More Like This</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {[1,2,3,4,5,6].map((i) => (
-              <div key={i} className="cursor-pointer group">
-                <div className="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden group-hover:scale-105 transition-transform duration-200">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-gray-600 text-xs">Video {i}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 
