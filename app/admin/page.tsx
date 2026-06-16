@@ -1,7 +1,11 @@
 'use client'
 import { useState } from 'react'
 
+const ADMIN_PASSWORD = 'jrfilms2024'
+
 export default function AdminPage() {
+  const [password, setPassword] = useState('')
+  const [authenticated, setAuthenticated] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [youtubeUrl, setYoutubeUrl] = useState('')
@@ -64,10 +68,42 @@ export default function AdminPage() {
     setLoading(false)
   }
 
+  if (!authenticated) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center">
+        <div className="bg-gray-900 p-8 rounded-xl w-full max-w-sm">
+          <h1 className="text-white text-2xl font-bold mb-2 text-center">JR Films</h1>
+          <p className="text-gray-400 text-sm text-center mb-6">Admin Access</p>
+          <input
+            type="password"
+            className="w-full bg-gray-800 text-white p-3 rounded-lg placeholder-gray-500 mb-4"
+            placeholder="Enter password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && (password === ADMIN_PASSWORD ? setAuthenticated(true) : setPassword(''))}
+          />
+          <button
+            onClick={() => password === ADMIN_PASSWORD ? setAuthenticated(true) : setPassword('')}
+            className="w-full bg-amber-500 text-black font-bold p-3 rounded-lg hover:bg-amber-400 transition"
+          >
+            Login
+          </button>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-black p-6">
-      <h1 className="text-white text-2xl font-bold mb-2">Admin — Add Video</h1>
-      <p className="text-gray-400 text-sm mb-8">Paste a YouTube URL — details will auto-fill</p>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-white text-2xl font-bold">Admin — Add Video</h1>
+          <p className="text-gray-400 text-sm">Paste a YouTube URL — details will auto-fill</p>
+        </div>
+        <button onClick={() => setAuthenticated(false)} className="text-gray-400 text-sm hover:text-white">
+          Logout
+        </button>
+      </div>
       
       <div className="max-w-lg space-y-4">
         <div className="flex gap-2">
@@ -86,9 +122,7 @@ export default function AdminPage() {
           </button>
         </div>
 
-        {thumbnail && (
-          <img src={thumbnail} alt="thumbnail" className="w-full rounded-lg" />
-        )}
+        {thumbnail && <img src={thumbnail} alt="thumbnail" className="w-full rounded-lg" />}
 
         <input
           className="w-full bg-gray-800 text-white p-3 rounded-lg placeholder-gray-500"
