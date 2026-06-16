@@ -37,7 +37,7 @@ export default async function Home() {
     .eq('visibility', 'public')
     .order('created_at', { ascending: false })
 
-  const featured = videos?.[0]
+  const featured = videos?.find(v => v.featured) || videos?.[0]
   const films = videos?.filter(v => v.category === 'films') || []
   const shorts = videos?.filter(v => v.category === 'shorts') || []
   const series = videos?.filter(v => v.category === 'series') || []
