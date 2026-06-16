@@ -61,7 +61,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
           <div className="relative z-10 px-6 md:px-16 max-w-xl">
             <p className="text-amber-500 text-xs font-bold uppercase tracking-widest mb-3">Featured</p>
-            <h1 className="text-white text-2xl md:text-4xl font-bold mb-3 leading-snug">{featured.title}</h1>
+            <h1 className="text-white text-xl md:text-2xl font-bold mb-3 leading-snug line-clamp-2">{featured.title}</h1>
             <p className="text-gray-300 text-sm mb-6 line-clamp-2">{featured.description}</p>
             <div className="flex gap-3">
               <Link href={`/watch/${featured.id}`} className="bg-amber-500 text-black font-bold px-6 py-2.5 rounded-lg hover:bg-amber-400 transition text-sm">
