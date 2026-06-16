@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -11,12 +12,12 @@ function VideoRow({ title, videos }: { title: string, videos: any[] }) {
   if (!videos.length) return null
   return (
     <div className="px-6 md:px-16 py-6">
-      <h2 className="text-white text-lg font-semibold mb-3">{title}</h2>
-      <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide">
+      <h2 className="text-white text-lg font-semibold mb-4">{title}</h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {videos.map((video) => (
-          <Link key={video.id} href={`/watch/${video.id}`} className="flex-shrink-0 w-32 md:w-44 group">
-            <div className="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden group-hover:ring-2 ring-amber-500 transition-all duration-200">
-              {video.thumbnail_url 
+          <Link key={video.id} href={`/watch/${video.id}`} className="group">
+            <div className="aspect-video bg-gray-800 rounded-xl overflow-hidden group-hover:ring-2 ring-amber-500 transition-all duration-200">
+              {video.thumbnail_url
                 ? <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                 : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
               }
@@ -76,7 +77,7 @@ export default async function Home() {
       )}
 
       {/* Video Rows */}
-      <div className="pb-12">
+      <div className="pb-8">
         <VideoRow title="Latest Videos" videos={videos || []} />
         <VideoRow title="Films" videos={films} />
         <VideoRow title="Series" videos={series} />
@@ -84,6 +85,7 @@ export default async function Home() {
         <VideoRow title="Songs" videos={songs} />
       </div>
 
+      <Footer />
     </main>
   )
 }
