@@ -7,6 +7,8 @@ export default function ManageVideos() {
   const [editTitle, setEditTitle] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [editCategory, setEditCategory] = useState('')
+  const [editSeriesName, setEditSeriesName] = useState('')
+  const [editEpisodeNumber, setEditEpisodeNumber] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,13 +28,19 @@ export default function ManageVideos() {
     setEditTitle(video.title || '')
     setEditDescription(video.description || '')
     setEditCategory(video.category || '')
+    setEditSeriesName(video.series_name || '')
+    setEditEpisodeNumber(video.episode_number?.toString() || '')
   }
 
   async function saveEdit(id: number) {
     await fetch('/api/update-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, title: editTitle, description: editDescription, category: editCategory })
+      body: JSON.stringify({
+        id, title: editTitle, description: editDescription, category: editCategory,
+        series_name: editCategory === 'series' ? editSeriesName : null,
+        episode_number: editCategory === 'series' && editEpisodeNumber ? parseInt(editEpisodeNumber) : null
+      })
     })
     setEditingId(null)
     loadVideos()
@@ -97,6 +105,25 @@ export default function ManageVideos() {
                   <option value="songs">Songs</option>
                   <option value="behind the scenes">Behind the Scenes</option>
                 </select>
+
+                {editCategory === 'series' && (
+                  <div className="flex gap-2">
+                    <input
+                      className="flex-1 bg-gray-800 text-white p-2 rounded text-sm"
+                      placeholder="Series name"
+                      value={editSeriesName}
+                      onChange={e => setEditSeriesName(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      className="w-24 bg-gray-800 text-white p-2 rounded text-sm"
+                      placeholder="Ep #"
+                      value={editEpisodeNumber}
+                      onChange={e => setEditEpisodeNumber(e.target.value)}
+                    />
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <button onClick={() => saveEdit(video.id)} className="bg-amber-500 text-black px-4 py-1.5 rounded text-sm font-semibold">Save</button>
                   <button onClick={() => setEditingId(null)} className="bg-gray-700 text-white px-4 py-1.5 rounded text-sm">Cancel</button>
@@ -105,7 +132,9 @@ export default function ManageVideos() {
             ) : (
               <div className="flex-1">
                 <p className="text-white text-sm font-medium">{video.title}</p>
-                <p className="text-amber-500 text-xs mt-1 capitalize">{video.category} {video.featured && '⭐ Featured'}</p>
+                <p className="text-amber-500 text-xs mt-1 capitalize">
+                  {video.category} {video.series_name && `· ${video.series_name} Ep ${video.episode_number}`} {video.featured && '⭐ Featured'}
+                </p>
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => startEdit(video)} className="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">Edit</button>
                   <button onClick={() => setFeatured(video.id)} className="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">Set as Featured</button>

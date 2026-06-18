@@ -10,6 +10,8 @@ export default function AdminPage() {
   const [description, setDescription] = useState('')
   const [youtubeUrl, setYoutubeUrl] = useState('')
   const [category, setCategory] = useState('shorts')
+  const [seriesName, setSeriesName] = useState('')
+  const [episodeNumber, setEpisodeNumber] = useState('')
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(false)
   const [message, setMessage] = useState('')
@@ -52,7 +54,11 @@ export default function AdminPage() {
     const response = await fetch('/api/add-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, youtube_id: youtubeId, category, thumbnail_url: thumbnail })
+      body: JSON.stringify({
+        title, description, youtube_id: youtubeId, category, thumbnail_url: thumbnail,
+        series_name: category === 'series' ? seriesName : null,
+        episode_number: category === 'series' ? episodeNumber : null
+      })
     })
     const data = await response.json()
     if (data.error) {
@@ -64,6 +70,8 @@ export default function AdminPage() {
       setYoutubeUrl('')
       setThumbnail('')
       setCategory('shorts')
+      setSeriesName('')
+      setEpisodeNumber('')
     }
     setLoading(false)
   }
@@ -100,9 +108,12 @@ export default function AdminPage() {
           <h1 className="text-white text-2xl font-bold">Admin — Add Video</h1>
           <p className="text-gray-400 text-sm">Paste a YouTube URL — details will auto-fill</p>
         </div>
-        <button onClick={() => setAuthenticated(false)} className="text-gray-400 text-sm hover:text-white">
-          Logout
-        </button>
+        <div className="flex gap-4 items-center">
+          <a href="/admin/manage" className="text-amber-500 text-sm hover:underline">Manage Videos</a>
+          <button onClick={() => setAuthenticated(false)} className="text-gray-400 text-sm hover:text-white">
+            Logout
+          </button>
+        </div>
       </div>
       
       <div className="max-w-lg space-y-4">
@@ -148,6 +159,26 @@ export default function AdminPage() {
           <option value="songs">Songs</option>
           <option value="behind the scenes">Behind the Scenes</option>
         </select>
+
+        {category === 'series' && (
+          <div className="bg-gray-900 border border-amber-500/30 rounded-lg p-4 space-y-3">
+            <p className="text-amber-500 text-xs font-semibold uppercase">Series Info</p>
+            <input
+              className="w-full bg-gray-800 text-white p-3 rounded-lg placeholder-gray-500"
+              placeholder="Series name (e.g. School Ghost)"
+              value={seriesName}
+              onChange={e => setSeriesName(e.target.value)}
+            />
+            <input
+              type="number"
+              className="w-full bg-gray-800 text-white p-3 rounded-lg placeholder-gray-500"
+              placeholder="Episode number (e.g. 1)"
+              value={episodeNumber}
+              onChange={e => setEpisodeNumber(e.target.value)}
+            />
+          </div>
+        )}
+
         <button
           onClick={handleSubmit}
           disabled={loading}

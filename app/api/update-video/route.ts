@@ -8,11 +8,19 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { id, title, description, category, featured } = body
+  const { id, title, description, category, featured, series_name, episode_number } = body
+
+  const updateData: any = {}
+  if (title !== undefined) updateData.title = title
+  if (description !== undefined) updateData.description = description
+  if (category !== undefined) updateData.category = category
+  if (featured !== undefined) updateData.featured = featured
+  if (series_name !== undefined) updateData.series_name = series_name
+  if (episode_number !== undefined) updateData.episode_number = episode_number
 
   const { data, error } = await supabase
     .from('videos')
-    .update({ title, description, category, featured })
+    .update(updateData)
     .eq('id', id)
     .select()
 
