@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 
 export default function ManageVideos() {
   const [videos, setVideos] = useState<any[]>([])
+  const [role, setRole] = useState<'admin' | 'editor' | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editDescription, setEditDescription] = useState('')
@@ -12,6 +13,8 @@ export default function ManageVideos() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const savedRole = sessionStorage.getItem('jrfilms_role')
+    if (savedRole === 'admin' || savedRole === 'editor') setRole(savedRole)
     loadVideos()
   }, [])
 
@@ -65,12 +68,23 @@ export default function ManageVideos() {
     loadVideos()
   }
 
+  if (!role) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-white">Please <a href="/admin" className="text-amber-500 underline">login</a> first.</p>
+      </main>
+    )
+  }
+
   if (loading) return <main className="min-h-screen bg-black text-white p-8">Loading...</main>
 
   return (
     <main className="min-h-screen bg-black p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-white text-2xl font-bold">Manage Videos ({videos.length})</h1>
+        <div>
+          <h1 className="text-white text-2xl font-bold">Manage Videos ({videos.length})</h1>
+          <span className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded bg-gray-800 text-amber-500 capitalize">{role} access</span>
+        </div>
         <a href="/admin" className="text-amber-500 text-sm hover:underline">+ Add New Video</a>
       </div>
 
@@ -137,8 +151,12 @@ export default function ManageVideos() {
                 </p>
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => startEdit(video)} className="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">Edit</button>
-                  <button onClick={() => setFeatured(video.id)} className="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">Set as Featured</button>
-                  <button onClick={() => deleteVideo(video.id)} className="bg-red-900 text-white px-3 py-1 rounded text-xs hover:bg-red-800">Delete</button>
+                  {role === 'admin' && (
+                    <>
+                      <button onClick={() => setFeatured(video.id)} className="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">Set as Featured</button>
+                      <button onClick={() => deleteVideo(video.id)} className="bg-red-900 text-white px-3 py-1 rounded text-xs hover:bg-red-800">Delete</button>
+                    </>
+                  )}
                 </div>
               </div>
             )}

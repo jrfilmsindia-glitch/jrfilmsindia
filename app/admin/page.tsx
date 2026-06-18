@@ -1,11 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const ADMIN_PASSWORD = 'jrfilms2024'
+const EDITOR_PASSWORD = 'jrfilmsedit2024'
 
 export default function AdminPage() {
   const [password, setPassword] = useState('')
-  const [authenticated, setAuthenticated] = useState(false)
+  const [role, setRole] = useState<'admin' | 'editor' | null>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [youtubeUrl, setYoutubeUrl] = useState('')
@@ -16,6 +17,28 @@ export default function AdminPage() {
   const [fetching, setFetching] = useState(false)
   const [message, setMessage] = useState('')
   const [thumbnail, setThumbnail] = useState('')
+
+  useEffect(() => {
+    const savedRole = sessionStorage.getItem('jrfilms_role')
+    if (savedRole === 'admin' || savedRole === 'editor') setRole(savedRole)
+  }, [])
+
+  function tryLogin() {
+    if (password === ADMIN_PASSWORD) {
+      setRole('admin')
+      sessionStorage.setItem('jrfilms_role', 'admin')
+    } else if (password === EDITOR_PASSWORD) {
+      setRole('editor')
+      sessionStorage.setItem('jrfilms_role', 'editor')
+    } else {
+      setPassword('')
+    }
+  }
+
+  function logout() {
+    setRole(null)
+    sessionStorage.removeItem('jrfilms_role')
+  }
 
   function extractYoutubeId(url: string) {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
@@ -76,7 +99,7 @@ export default function AdminPage() {
     setLoading(false)
   }
 
-  if (!authenticated) {
+  if (!role) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center">
         <div className="bg-gray-900 p-8 rounded-xl w-full max-w-sm">
@@ -88,10 +111,10 @@ export default function AdminPage() {
             placeholder="Enter password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && (password === ADMIN_PASSWORD ? setAuthenticated(true) : setPassword(''))}
+            onKeyDown={e => e.key === 'Enter' && tryLogin()}
           />
           <button
-            onClick={() => password === ADMIN_PASSWORD ? setAuthenticated(true) : setPassword('')}
+            onClick={tryLogin}
             className="w-full bg-amber-500 text-black font-bold p-3 rounded-lg hover:bg-amber-400 transition"
           >
             Login
@@ -107,10 +130,11 @@ export default function AdminPage() {
         <div>
           <h1 className="text-white text-2xl font-bold">Admin — Add Video</h1>
           <p className="text-gray-400 text-sm">Paste a YouTube URL — details will auto-fill</p>
+          <span className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded bg-gray-800 text-amber-500 capitalize">{role} access</span>
         </div>
         <div className="flex gap-4 items-center">
           <a href="/admin/manage" className="text-amber-500 text-sm hover:underline">Manage Videos</a>
-          <button onClick={() => setAuthenticated(false)} className="text-gray-400 text-sm hover:text-white">
+          <button onClick={logout} className="text-gray-400 text-sm hover:text-white">
             Logout
           </button>
         </div>
