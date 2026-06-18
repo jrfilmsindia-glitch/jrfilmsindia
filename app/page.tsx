@@ -8,15 +8,17 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkdGpmZnJldGhocm94aHZudmxzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTIwMDcxOCwiZXhwIjoyMDk2Nzc2NzE4fQ.rJQKymv9q3ywfIyGER0ZhlyYdoiHB2EK-SpxPZYUFuI'
 )
 
-function VideoRow({ title, videos }: { title: string, videos: any[] }) {
+export const revalidate = 0
+
+function VideoRow({ title, videos, vertical }: { title: string, videos: any[], vertical?: boolean }) {
   if (!videos.length) return null
   return (
     <div className="px-6 md:px-16 py-6">
       <h2 className="text-white text-lg font-semibold mb-4">{title}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className={vertical ? "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3" : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"}>
         {videos.map((video) => (
           <Link key={video.id} href={`/watch/${video.id}`} className="group">
-            <div className="aspect-video bg-gray-800 rounded-xl overflow-hidden group-hover:ring-2 ring-amber-500 transition-all duration-200">
+            <div className={(vertical ? "aspect-[9/16]" : "aspect-video") + " bg-gray-800 rounded-xl overflow-hidden group-hover:ring-2 ring-amber-500 transition-all duration-200"}>
               {video.thumbnail_url
                 ? <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                 : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
@@ -38,11 +40,12 @@ export default async function Home() {
     .eq('visibility', 'public')
     .order('created_at', { ascending: false })
 
-  const featured = videos?.find(v => v.featured) || videos?.[0]
+  const featured = videos?.find(v => v.featured) || videos?.find(v => v.category === 'films') || videos?.[0]
   const films = videos?.filter(v => v.category === 'films') || []
   const shorts = videos?.filter(v => v.category === 'shorts') || []
   const series = videos?.filter(v => v.category === 'series') || []
   const songs = videos?.filter(v => v.category === 'songs') || []
+  const latestLandscape = (videos || []).filter(v => v.category !== 'shorts').slice(0, 10)
 
   return (
     <main className="min-h-screen bg-black">
@@ -78,10 +81,10 @@ export default async function Home() {
 
       {/* Video Rows */}
       <div className="pb-8">
-        <VideoRow title="Latest Videos" videos={videos || []} />
+        <VideoRow title="Latest Films & Series" videos={latestLandscape} />
+        <VideoRow title="Shorts" videos={shorts} vertical />
         <VideoRow title="Films" videos={films} />
         <VideoRow title="Series" videos={series} />
-        <VideoRow title="Shorts" videos={shorts} />
         <VideoRow title="Songs" videos={songs} />
       </div>
 
