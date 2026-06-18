@@ -85,6 +85,7 @@ export default function ManageVideos() {
           <h1 className="text-white text-2xl font-bold">Manage Videos ({videos.length})</h1>
           <span className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded bg-gray-800 text-amber-500 capitalize">{role} access</span>
         </div>
+        <a href="/admin/dashboard" className="text-amber-500 text-sm hover:underline mr-4">Dashboard</a>
         <a href="/admin" className="text-amber-500 text-sm hover:underline">+ Add New Video</a>
       </div>
 

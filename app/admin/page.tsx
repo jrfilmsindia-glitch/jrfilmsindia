@@ -1,10 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 const ADMIN_PASSWORD = 'jrfilms2024'
 const EDITOR_PASSWORD = 'jrfilmsedit2024'
 
 export default function AdminPage() {
+  const router = useRouter()
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<'admin' | 'editor' | null>(null)
   const [title, setTitle] = useState('')
@@ -25,11 +27,11 @@ export default function AdminPage() {
 
   function tryLogin() {
     if (password === ADMIN_PASSWORD) {
-      setRole('admin')
       sessionStorage.setItem('jrfilms_role', 'admin')
+      router.push('/admin/dashboard')
     } else if (password === EDITOR_PASSWORD) {
-      setRole('editor')
       sessionStorage.setItem('jrfilms_role', 'editor')
+      router.push('/admin/dashboard')
     } else {
       setPassword('')
     }
@@ -133,6 +135,7 @@ export default function AdminPage() {
           <span className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded bg-gray-800 text-amber-500 capitalize">{role} access</span>
         </div>
         <div className="flex gap-4 items-center">
+          <a href="/admin/dashboard" className="text-amber-500 text-sm hover:underline">Dashboard</a>
           <a href="/admin/manage" className="text-amber-500 text-sm hover:underline">Manage Videos</a>
           <button onClick={logout} className="text-gray-400 text-sm hover:text-white">
             Logout
