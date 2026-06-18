@@ -40,6 +40,7 @@ export default function Dashboard() {
         <div className="flex gap-4 items-center text-sm">
           <a href="/admin" className="text-amber-500 hover:underline">+ Add Video</a>
           <a href="/admin/manage" className="text-amber-500 hover:underline">Manage Videos</a>
+          <button onClick={() => { sessionStorage.removeItem("jrfilms_role"); window.location.href = "/admin" }} className="text-gray-400 hover:text-white">Logout</button>
         </div>
       </div>
 
