@@ -137,7 +137,7 @@ export default async function Home() {
       <Navbar />
       
       {featured && (
-        <div className="relative h-[70vh] md:h-[78vh] flex items-end pb-12">
+        <div className="relative h-[75vh] md:h-[78vh] flex items-end pb-12">
           {featured.thumbnail_url && (
             <img 
               src={featured.thumbnail_url} 
