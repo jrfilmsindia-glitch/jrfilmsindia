@@ -25,11 +25,11 @@ export default function SplashScreen() {
   if (!show) return null
 
   return (
-    <div className={`fixed inset-0 z-[9999] bg-black flex items-center justify-center p-6 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
       <img
         src="/jrf-logo.png"
         alt="JR Films"
-        className="w-auto h-auto max-w-[90vw] max-h-[80vh] object-contain animate-pulse"
+        className="w-[80vw] max-w-[420px] object-contain animate-pulse"
       />
     </div>
   )
