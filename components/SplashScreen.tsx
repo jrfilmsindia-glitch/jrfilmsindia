@@ -11,11 +11,11 @@ export default function SplashScreen() {
       setShow(false)
       return
     }
-    const fadeTimer = setTimeout(() => setFadeOut(true), 9500)
+    const fadeTimer = setTimeout(() => setFadeOut(true), 4500)
     const hideTimer = setTimeout(() => {
       setShow(false)
       sessionStorage.setItem('jrf_splash_shown', 'true')
-    }, 10000)
+    }, 5000)
     return () => {
       clearTimeout(fadeTimer)
       clearTimeout(hideTimer)
@@ -25,8 +25,12 @@ export default function SplashScreen() {
   if (!show) return null
 
   return (
-    <div className={`fixed inset-0 z-[9999] bg-black flex items-center justify-center px-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
-      <img src="/jrf-logo.png" alt="JR Films" className="w-full max-w-[280px] sm:max-w-[360px] md:max-w-[440px] lg:max-w-[520px] animate-pulse" />
+    <div className={`fixed inset-0 z-[9999] bg-black flex items-center justify-center p-6 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+      <img
+        src="/jrf-logo.png"
+        alt="JR Films"
+        className="w-auto h-auto max-w-[90vw] max-h-[80vh] object-contain animate-pulse"
+      />
     </div>
   )
 }
