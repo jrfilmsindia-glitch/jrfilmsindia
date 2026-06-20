@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [category, setCategory] = useState('shorts')
   const [seriesName, setSeriesName] = useState('')
   const [episodeNumber, setEpisodeNumber] = useState('')
+  const [orientation, setOrientation] = useState('landscape')
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(false)
   const [message, setMessage] = useState('')
@@ -82,7 +83,8 @@ export default function AdminPage() {
       body: JSON.stringify({
         title, description, youtube_id: youtubeId, category, thumbnail_url: thumbnail,
         series_name: category === 'series' ? seriesName : null,
-        episode_number: category === 'series' ? episodeNumber : null
+        episode_number: category === 'series' ? episodeNumber : null,
+        orientation: category === 'shorts' ? 'vertical' : orientation
       })
     })
     const data = await response.json()
@@ -97,6 +99,7 @@ export default function AdminPage() {
       setCategory('shorts')
       setSeriesName('')
       setEpisodeNumber('')
+      setOrientation('landscape')
     }
     setLoading(false)
   }
@@ -117,7 +120,7 @@ export default function AdminPage() {
           />
           <button
             onClick={tryLogin}
-            className="w-full bg-amber-500 text-black font-bold p-3 rounded-lg hover:bg-amber-400 transition"
+            className="w-full bg-purple-500 text-black font-bold p-3 rounded-lg hover:bg-purple-400 transition"
           >
             Login
           </button>
@@ -132,11 +135,11 @@ export default function AdminPage() {
         <div>
           <h1 className="text-white text-2xl font-bold">Admin — Add Video</h1>
           <p className="text-gray-400 text-sm">Paste a YouTube URL — details will auto-fill</p>
-          <span className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded bg-gray-800 text-amber-500 capitalize">{role} access</span>
+          <span className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded bg-gray-800 text-purple-500 capitalize">{role} access</span>
         </div>
         <div className="flex gap-4 items-center">
-          <a href="/admin/dashboard" className="text-amber-500 text-sm hover:underline">Dashboard</a>
-          <a href="/admin/manage" className="text-amber-500 text-sm hover:underline">Manage Videos</a>
+          <a href="/admin/dashboard" className="text-purple-500 text-sm hover:underline">Dashboard</a>
+          <a href="/admin/manage" className="text-purple-500 text-sm hover:underline">Manage Videos</a>
           <button onClick={logout} className="text-gray-400 text-sm hover:text-white">
             Logout
           </button>
@@ -188,8 +191,8 @@ export default function AdminPage() {
         </select>
 
         {category === 'series' && (
-          <div className="bg-gray-900 border border-amber-500/30 rounded-lg p-4 space-y-3">
-            <p className="text-amber-500 text-xs font-semibold uppercase">Series Info</p>
+          <div className="bg-gray-900 border border-purple-500/30 rounded-lg p-4 space-y-3">
+            <p className="text-purple-500 text-xs font-semibold uppercase">Series Info</p>
             <input
               className="w-full bg-gray-800 text-white p-3 rounded-lg placeholder-gray-500"
               placeholder="Series name (e.g. School Ghost)"
@@ -203,13 +206,32 @@ export default function AdminPage() {
               value={episodeNumber}
               onChange={e => setEpisodeNumber(e.target.value)}
             />
+            <div>
+              <p className="text-gray-400 text-xs mb-2">Video Orientation</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOrientation('landscape')}
+                  className={`flex-1 p-2 rounded-lg text-sm font-medium transition ${orientation === 'landscape' ? 'bg-purple-500 text-black' : 'bg-gray-800 text-gray-300'}`}
+                >
+                  ▭ Landscape (16:9)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOrientation('vertical')}
+                  className={`flex-1 p-2 rounded-lg text-sm font-medium transition ${orientation === 'vertical' ? 'bg-purple-500 text-black' : 'bg-gray-800 text-gray-300'}`}
+                >
+                  ▯ Vertical (9:16)
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-amber-500 text-black font-bold p-3 rounded-lg hover:bg-amber-400 transition"
+          className="w-full bg-purple-500 text-black font-bold p-3 rounded-lg hover:bg-purple-400 transition"
         >
           {loading ? 'Saving...' : 'Add Video'}
         </button>

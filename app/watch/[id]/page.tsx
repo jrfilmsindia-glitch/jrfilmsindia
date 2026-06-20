@@ -62,18 +62,18 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             <div className="flex items-center gap-3">
               <h1 className="text-white text-2xl font-bold">{video.title}</h1>
             </div>
-            <p className="text-amber-500 text-sm mt-1">
+            <p className="text-purple-500 text-sm mt-1">
               {video.category} {video.series_name && `· ${video.series_name} · Episode ${video.episode_number}`}
             </p>
             <p className="text-gray-400 text-sm mt-3 leading-relaxed">{video.description}</p>
           </div>
           <div className="flex gap-4 mt-6">
             {nextEpisode ? (
-              <Link href={`/watch/${nextEpisode.id}`} className="bg-amber-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-amber-400 transition">
+              <Link href={`/watch/${nextEpisode.id}`} className="bg-purple-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-purple-400 transition">
                 ▶ Next Episode
               </Link>
             ) : (
-              <button className="bg-amber-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-amber-400 transition">▶ Play</button>
+              <button className="bg-purple-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-purple-400 transition">▶ Play</button>
             )}
             <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">+ Watchlist</button>
             <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">↗ Share</button>
@@ -87,17 +87,17 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                   <Link
                     key={ep.id}
                     href={`/watch/${ep.id}`}
-                    className={`flex gap-4 p-3 rounded-lg transition ${ep.id === video.id ? 'bg-gray-800 ring-1 ring-amber-500' : 'bg-gray-900 hover:bg-gray-800'}`}
+                    className={`flex gap-4 p-3 rounded-lg transition ${ep.id === video.id ? 'bg-gray-800 ring-1 ring-purple-500' : 'bg-gray-900 hover:bg-gray-800'}`}
                   >
                     <div className="relative w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
                       {ep.thumbnail_url && <img src={ep.thumbnail_url} alt={ep.title} className="w-full h-full object-cover" />}
-                      <span className="absolute top-1 left-1 bg-amber-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
+                      <span className="absolute top-1 left-1 bg-purple-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
                         EP {ep.episode_number}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-medium line-clamp-2">{ep.title}</p>
-                      {ep.id === video.id && <p className="text-amber-500 text-xs mt-1">Now Playing</p>}
+                      {ep.id === video.id && <p className="text-purple-500 text-xs mt-1">Now Playing</p>}
                     </div>
                   </Link>
                 ))}
