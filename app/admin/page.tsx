@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-const ADMIN_PASSWORD = 'jrfilms2024'
-const EDITOR_PASSWORD = 'jrfilmsedit2024'
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || ''
+const EDITOR_PASSWORD = process.env.NEXT_PUBLIC_EDITOR_PASSWORD || ''
 
 export default function AdminPage() {
   const router = useRouter()
