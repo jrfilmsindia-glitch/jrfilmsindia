@@ -18,5 +18,11 @@ export async function GET() {
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, 5)
 
-  return NextResponse.json({ total, byCategory, seriesCount: seriesNames.size, recent })
+  const totalViews = videos?.reduce((sum, v) => sum + (v.view_count || 0), 0) || 0
+
+  const topVideos = [...(videos || [])]
+    .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
+    .slice(0, 5)
+
+  return NextResponse.json({ total, byCategory, seriesCount: seriesNames.size, recent, totalViews, topVideos })
 }

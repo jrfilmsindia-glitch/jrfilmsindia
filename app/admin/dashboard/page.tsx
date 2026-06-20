@@ -1,6 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
 
+function formatViews(count: number) {
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
+  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+  return count.toString()
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState<any>(null)
   const [role, setRole] = useState<string | null>(null)
@@ -44,10 +50,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
         <div className="bg-gray-900 rounded-xl p-5">
           <p className="text-gray-400 text-xs uppercase font-semibold">Total Videos</p>
           <p className="text-white text-3xl font-bold mt-2">{stats.total}</p>
+        </div>
+        <div className="bg-gray-900 rounded-xl p-5">
+          <p className="text-gray-400 text-xs uppercase font-semibold">Total Views</p>
+          <p className="text-white text-3xl font-bold mt-2">{formatViews(stats.totalViews || 0)}</p>
         </div>
         <div className="bg-gray-900 rounded-xl p-5">
           <p className="text-gray-400 text-xs uppercase font-semibold">Films</p>
@@ -64,17 +74,37 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <h2 className="text-white text-lg font-bold mb-4">Recently Added</h2>
-      <div className="space-y-3">
-        {stats.recent.map((video: any) => (
-          <div key={video.id} className="bg-gray-900 rounded-lg p-4 flex gap-4 items-center">
-            <img src={video.thumbnail_url} alt="" className="w-24 h-14 object-cover rounded flex-shrink-0 bg-gray-800" />
-            <div className="flex-1">
-              <p className="text-white text-sm font-medium">{video.title}</p>
-              <p className="text-purple-500 text-xs mt-1 capitalize">{video.category}</p>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <h2 className="text-white text-lg font-bold mb-4">🔥 Top Performing Videos</h2>
+          <div className="space-y-3">
+            {stats.topVideos?.map((video: any, idx: number) => (
+              <div key={video.id} className="bg-gray-900 rounded-lg p-4 flex gap-4 items-center">
+                <span className="text-purple-500 font-bold text-lg w-5">{idx + 1}</span>
+                <img src={video.thumbnail_url} alt="" className="w-24 h-14 object-cover rounded flex-shrink-0 bg-gray-800" />
+                <div className="flex-1">
+                  <p className="text-white text-sm font-medium line-clamp-1">{video.title}</p>
+                  <p className="text-purple-500 text-xs mt-1">{formatViews(video.view_count || 0)} views</p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div>
+          <h2 className="text-white text-lg font-bold mb-4">Recently Added</h2>
+          <div className="space-y-3">
+            {stats.recent.map((video: any) => (
+              <div key={video.id} className="bg-gray-900 rounded-lg p-4 flex gap-4 items-center">
+                <img src={video.thumbnail_url} alt="" className="w-24 h-14 object-cover rounded flex-shrink-0 bg-gray-800" />
+                <div className="flex-1">
+                  <p className="text-white text-sm font-medium line-clamp-1">{video.title}</p>
+                  <p className="text-purple-500 text-xs mt-1 capitalize">{video.category}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   )
