@@ -1,10 +1,17 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import ViewTracker from '@/components/ViewTracker'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
 
 export const revalidate = 0
+
+function formatViews(count: number) {
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
+  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+  return count.toString()
+}
 
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -42,6 +49,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
   return (
     <main className="min-h-screen bg-black">
+      <ViewTracker videoId={String(video.id)} />
       <Navbar />
       <div className="pt-20 px-6 md:px-16 pb-12">
         <div className="max-w-3xl mx-auto">
@@ -60,7 +68,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
               <h1 className="text-white text-2xl font-bold">{video.title}</h1>
             </div>
             <p className="text-purple-500 text-sm mt-1">
-              {video.category} {video.series_name && `· ${video.series_name} · Episode ${video.episode_number}`}
+              {video.category} {video.series_name && `· ${video.series_name} · Episode ${video.episode_number}`} · {formatViews(video.view_count || 0)} views
             </p>
             <p className="text-gray-400 text-sm mt-3 leading-relaxed">{video.description}</p>
           </div>
