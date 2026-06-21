@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SocialStats from '@/components/SocialStats'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
@@ -130,7 +131,7 @@ export default async function Home() {
   const featuredTitle = featured ? featured.title.split('|')[0].trim() : ''
 
   return (
-    <main className="min-h-screen bg-[#0a0710]">
+    <main className="min-h-screen bg-[#0a0710]" data-pdf-capture="homepage">
       <Navbar />
       
       {featured && (
@@ -160,6 +161,7 @@ export default async function Home() {
         </div>
       )}
 
+      <SocialStats />
       <div className="pt-8 pb-2">
         <div className="px-6 md:px-12 mb-1">
           <span className="text-purple-400 text-[11px] font-semibold uppercase tracking-[0.15em]">Cinema</span>
