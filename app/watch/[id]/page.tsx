@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar'
 import ViewTracker from '@/components/ViewTracker'
 import ShareButton from '@/components/ShareButton'
 import { createClient } from '@supabase/supabase-js'
+import type { Metadata } from 'next'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
 
@@ -12,6 +13,36 @@ function formatViews(count: number) {
   if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
   if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
   return count.toString()
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const { data: video } = await supabase.from('videos').select('*').eq('id', id).single()
+
+  if (!video) {
+    return { title: 'Video Not Found - JR Films India' }
+  }
+
+  const cleanTitle = video.title.split('|')[0].trim()
+  const pageTitle = `${cleanTitle} - JR Films India`
+  const description = video.description?.slice(0, 160) || `Watch ${cleanTitle} on JR Films India.`
+
+  return {
+    title: pageTitle,
+    description: description,
+    openGraph: {
+      title: pageTitle,
+      description: description,
+      images: video.thumbnail_url ? [video.thumbnail_url] : [],
+      type: 'video.other',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: pageTitle,
+      description: description,
+      images: video.thumbnail_url ? [video.thumbnail_url] : [],
+    },
+  }
 }
 
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
