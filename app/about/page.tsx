@@ -27,9 +27,9 @@ export default function AboutPage() {
         <div className="mt-12 border-t border-white/10 pt-8">
           <h2 className="text-white text-lg font-semibold mb-3">Connect with us</h2>
           <div className="flex gap-4 text-sm">
-            <a href="https://youtube.com" target="_blank" className="text-purple-400 hover:underline">YouTube</a>
-            <a href="https://instagram.com" target="_blank" className="text-purple-400 hover:underline">Instagram</a>
-            <a href="https://facebook.com" target="_blank" className="text-purple-400 hover:underline">Facebook</a>
+            <a href="https://www.youtube.com/@JR_Films2023" target="_blank" className="text-purple-400 hover:underline">YouTube</a>
+            <a href="https://www.instagram.com/jrfilms_india?igsh=dDRqamplNDg0NDQ0" target="_blank" className="text-purple-400 hover:underline">Instagram</a>
+            <a href="https://www.facebook.com/share/1G6cE8i68Z/?mibextid=wwXIfr" target="_blank" className="text-purple-400 hover:underline">Facebook</a>
           </div>
         </div>
       </div>

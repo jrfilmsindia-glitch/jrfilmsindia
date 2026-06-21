@@ -22,9 +22,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white text-sm font-semibold mb-4">Follow Us</h4>
             <ul className="space-y-2">
-              <li><a href="https://youtube.com" target="_blank" className="text-gray-400 text-sm hover:text-purple-500 transition">YouTube</a></li>
-              <li><a href="https://instagram.com" target="_blank" className="text-gray-400 text-sm hover:text-purple-500 transition">Instagram</a></li>
-              <li><a href="https://facebook.com" target="_blank" className="text-gray-400 text-sm hover:text-purple-500 transition">Facebook</a></li>
+              <li><a href="https://www.youtube.com/@JR_Films2023" target="_blank" className="text-gray-400 text-sm hover:text-purple-500 transition">YouTube</a></li>
+              <li><a href="https://www.instagram.com/jrfilms_india?igsh=dDRqamplNDg0NDQ0" target="_blank" className="text-gray-400 text-sm hover:text-purple-500 transition">Instagram</a></li>
+              <li><a href="https://www.facebook.com/share/1G6cE8i68Z/?mibextid=wwXIfr" target="_blank" className="text-gray-400 text-sm hover:text-purple-500 transition">Facebook</a></li>
             </ul>
           </div>
           <div>
