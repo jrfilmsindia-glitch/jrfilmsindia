@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import ViewTracker from '@/components/ViewTracker'
+import ShareButton from '@/components/ShareButton'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
@@ -81,7 +82,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
               <button className="bg-purple-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-purple-400 transition">▶ Play</button>
             )}
             <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">+ Watchlist</button>
-            <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">↗ Share</button>
+            <ShareButton title={video.title} url={`https://jrfilmsindia.com/watch/${video.id}`} />
           </div>
 
           {episodes.length > 0 && (

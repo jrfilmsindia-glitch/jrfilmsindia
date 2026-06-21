@@ -11,11 +11,11 @@ export default function SplashScreen() {
       setShow(false)
       return
     }
-    const fadeTimer = setTimeout(() => setFadeOut(true), 4500)
+    const fadeTimer = setTimeout(() => setFadeOut(true), 2500)
     const hideTimer = setTimeout(() => {
       setShow(false)
       sessionStorage.setItem('jrf_splash_shown', 'true')
-    }, 5000)
+    }, 3000)
     return () => {
       clearTimeout(fadeTimer)
       clearTimeout(hideTimer)
