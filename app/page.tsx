@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import SocialStats from '@/components/SocialStats'
+import FadeInSection from '@/components/FadeInSection'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
@@ -194,14 +195,26 @@ export default async function Home() {
               sizes="100vw"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0710] via-[#0a0710]/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0710]/90 via-[#0a0710]/40 to-transparent" />
+          {/* Breathing gradient overlay */}
+          <div className="absolute inset-0 animate-gradient-breathe bg-gradient-to-br from-purple-900/30 via-[#0a0710]/60 to-pink-900/20 bg-[length:300%_300%]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0710] via-[#0a0710]/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0710]/90 via-[#0a0710]/30 to-transparent" />
           <div className="relative z-10 px-6 md:px-12 max-w-2xl">
-            <p className="text-purple-400 text-xs font-medium uppercase tracking-[0.15em] mb-3">Featured Film</p>
-            <h1 className="text-white text-3xl md:text-5xl font-semibold mb-4 leading-tight">{featuredTitle}</h1>
-            <p className="text-gray-300 text-sm md:text-base mb-7 line-clamp-2 max-w-xl">{featured.description}</p>
-            <div className="flex gap-3 flex-wrap">
-              <Link href={"/watch/" + featured.id} className="inline-flex items-center gap-2 bg-white text-black font-bold px-7 py-3 rounded-xl hover:bg-gray-100 transition-all duration-150 text-sm shadow-lg shadow-black/30">
+            <p className="text-purple-400 text-xs font-medium uppercase tracking-[0.15em] mb-3 animate-fade-up" style={{ animationDelay: '0.1s', opacity: 0, animationFillMode: 'forwards' }}>Featured Film</p>
+            <h1 className="text-white text-3xl md:text-5xl font-semibold mb-4 leading-tight">
+              {featuredTitle.split(' ').map((word: string, i: number) => (
+                <span
+                  key={i}
+                  className="hero-word"
+                  style={{ animationDelay: `${0.2 + i * 0.08}s`, animationFillMode: 'forwards' }}
+                >
+                  {word}{' '}
+                </span>
+              ))}
+            </h1>
+            <p className="text-gray-300 text-sm md:text-base mb-7 line-clamp-2 max-w-xl animate-fade-up" style={{ animationDelay: '0.55s', opacity: 0, animationFillMode: 'forwards' }}>{featured.description}</p>
+            <div className="flex gap-3 flex-wrap animate-fade-up" style={{ animationDelay: '0.7s', opacity: 0, animationFillMode: 'forwards' }}>
+              <Link href={"/watch/" + featured.id} className="btn-shimmer inline-flex items-center gap-2 bg-white text-black font-bold px-7 py-3 rounded-xl hover:bg-gray-100 transition-all duration-150 text-sm shadow-lg shadow-black/30">
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 ml-0.5">
                   <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                 </svg>
@@ -218,26 +231,30 @@ export default async function Home() {
         </div>
       )}
 
-      <SocialStats />
+      <FadeInSection><SocialStats /></FadeInSection>
       <div className="pt-8 pb-2">
-        <div className="px-6 md:px-12 mb-1">
-          <span className="text-purple-400 text-[11px] font-semibold uppercase tracking-[0.15em]">Cinema</span>
-          <span className="text-gray-500 text-xs ml-2">Original films and story-driven series</span>
-        </div>
-        <SeriesPosterRow seriesList={cinemaSeries} accent="purple" />
-        <LandscapeRow title="Films" videos={films} seeAllHref="/browse" accent="purple" />
-        <LandscapeRow title="Songs" videos={songs} seeAllHref="/browse" accent="purple" />
+        <FadeInSection delay={0}>
+          <div className="px-6 md:px-12 mb-1">
+            <span className="text-purple-400 text-[11px] font-semibold uppercase tracking-[0.15em]">Cinema</span>
+            <span className="text-gray-500 text-xs ml-2">Original films and story-driven series</span>
+          </div>
+        </FadeInSection>
+        <FadeInSection delay={60}><SeriesPosterRow seriesList={cinemaSeries} accent="purple" /></FadeInSection>
+        <FadeInSection delay={120}><LandscapeRow title="Films" videos={films} seeAllHref="/browse" accent="purple" /></FadeInSection>
+        <FadeInSection delay={180}><LandscapeRow title="Songs" videos={songs} seeAllHref="/browse" accent="purple" /></FadeInSection>
       </div>
 
       <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-6 mx-6 md:mx-12" />
 
       <div className="pt-2 pb-12">
-        <div className="px-6 md:px-12 mb-1">
-          <span className="text-pink-400 text-[11px] font-semibold uppercase tracking-[0.15em]">Reels</span>
-          <span className="text-gray-500 text-xs ml-2">Quick vertical stories</span>
-        </div>
-        <SeriesPosterRow seriesList={reelsSeries} accent="pink" />
-        <VerticalRow title="Shorts" videos={shorts} seeAllHref="/shorts" />
+        <FadeInSection delay={0}>
+          <div className="px-6 md:px-12 mb-1">
+            <span className="text-pink-400 text-[11px] font-semibold uppercase tracking-[0.15em]">Reels</span>
+            <span className="text-gray-500 text-xs ml-2">Quick vertical stories</span>
+          </div>
+        </FadeInSection>
+        <FadeInSection delay={60}><SeriesPosterRow seriesList={reelsSeries} accent="pink" /></FadeInSection>
+        <FadeInSection delay={120}><VerticalRow title="Shorts" videos={shorts} seeAllHref="/shorts" /></FadeInSection>
       </div>
 
       <Footer />
