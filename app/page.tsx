@@ -19,7 +19,7 @@ function isNew(createdAt: string) {
 
 function CardSkeleton() {
   return (
-    <div className="flex-shrink-0 w-[200px] md:w-[220px] animate-pulse">
+    <div className="flex-shrink-0 w-[160px] md:w-[220px] animate-pulse">
       <div className="aspect-video bg-white/5 rounded-xl" />
       <div className="h-2.5 bg-white/5 rounded mt-2 w-3/4" />
     </div>
@@ -42,12 +42,12 @@ function LandscapeRow({ title, videos, seeAllHref, accent }: { title: string, vi
           </Link>
         )}
       </div>
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+      <div className="flex gap-2.5 md:gap-3 overflow-x-auto scrollbar-hide pb-2">
         {videos.map((video) => (
-          <Link key={video.id} href={`/watch/${video.id}`} className="group flex-shrink-0 w-[200px] md:w-[220px]">
+          <Link key={video.id} href={`/watch/${video.id}`} className="group flex-shrink-0 w-[160px] md:w-[220px]">
             <div className={`relative aspect-video bg-[#1a1020] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 ${ringColor} transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
               {video.thumbnail_url
-                ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="220px" />
+                ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="(max-width: 768px) 160px, 220px" />
                 : <CardSkeleton />
               }
               {/* NEW badge */}
@@ -94,12 +94,12 @@ function VerticalRow({ title, videos, seeAllHref, episodeCount }: { title: strin
             </Link>
           ) : null}
       </div>
-      <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-2">
+      <div className="flex gap-2 md:gap-2.5 overflow-x-auto scrollbar-hide pb-2">
         {videos.map((video) => (
-          <Link key={video.id} href={`/watch/${video.id}`} className="group flex-shrink-0 w-[120px] md:w-[140px]">
+          <Link key={video.id} href={`/watch/${video.id}`} className="group flex-shrink-0 w-[105px] md:w-[140px]">
             <div className="relative aspect-[9/16] bg-[#1f1318] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 group-hover:ring-pink-500/60 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60">
               {video.thumbnail_url
-                ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="140px" />
+                ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="(max-width: 768px) 105px, 140px" />
                 : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-[10px]">No thumbnail</span></div>
               }
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
@@ -133,12 +133,12 @@ function SeriesPosterRow({ seriesList, accent }: { seriesList: { name: string, e
           <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3"><path fillRule="evenodd" d="M6.22 4.22a.75.75 0 011.06 0l3.25 3.25a.75.75 0 010 1.06l-3.25 3.25a.75.75 0 01-1.06-1.06L9.19 8 6.22 5.03a.75.75 0 010-1.06z" clipRule="evenodd"/></svg>
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+      <div className="flex gap-2.5 md:gap-3 overflow-x-auto scrollbar-hide pb-2">
         {seriesList.map((s) => {
           const firstEp = s.episodes[0]
           const vertical = accent === 'pink'
           return (
-            <Link key={s.name} href={`/watch/${firstEp.id}`} className="group flex-shrink-0" style={{ width: vertical ? '130px' : '200px' }}>
+            <Link key={s.name} href={`/watch/${firstEp.id}`} className={`group flex-shrink-0 ${vertical ? 'w-[105px] md:w-[130px]' : 'w-[160px] md:w-[200px]'}`}>
               <div className={`relative ${vertical ? 'aspect-[9/16]' : 'aspect-video'} bg-[#161118] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 ${ringColor} transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
                 {firstEp.thumbnail_url
                   ? <Image src={firstEp.thumbnail_url} alt={s.name} fill className="object-cover" sizes="200px" />
@@ -206,24 +206,24 @@ export default async function Home() {
       <Navbar />
 
       {featured && (
-        <div className="relative h-[75vh] md:h-[78vh] flex items-end pb-12">
+        <div className="relative h-[60vh] md:h-[78vh] flex items-end pb-8 md:pb-12">
           {featured.thumbnail_url && (
             <Image
               src={featured.thumbnail_url}
               alt={featured.title}
               fill
-              className="object-cover"
+              className="object-cover object-top md:object-center"
               priority
               sizes="100vw"
             />
           )}
           {/* Breathing gradient overlay */}
           <div className="absolute inset-0 animate-gradient-breathe bg-gradient-to-br from-purple-900/30 via-[#0a0710]/60 to-pink-900/20 bg-[length:300%_300%]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0710] via-[#0a0710]/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0710]/90 via-[#0a0710]/30 to-transparent" />
-          <div className="relative z-10 px-6 md:px-12 max-w-2xl">
-            <p className="text-purple-400 text-xs font-medium uppercase tracking-[0.15em] mb-3 animate-fade-up" style={{ animationDelay: '0.1s', opacity: 0, animationFillMode: 'forwards' }}>Featured Film</p>
-            <h1 className="text-white text-3xl md:text-5xl font-semibold mb-4 leading-tight">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0710] via-[#0a0710]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0710]/80 via-[#0a0710]/20 to-transparent" />
+          <div className="relative z-10 px-4 md:px-12 max-w-2xl w-full">
+            <p className="text-purple-400 text-[10px] md:text-xs font-medium uppercase tracking-[0.15em] mb-2 md:mb-3 animate-fade-up" style={{ animationDelay: '0.1s', opacity: 0, animationFillMode: 'forwards' }}>Featured Film</p>
+            <h1 className="text-white text-2xl md:text-5xl font-bold mb-2 md:mb-4 leading-tight">
               {featuredTitle.split(' ').map((word: string, i: number) => (
                 <span
                   key={i}
@@ -234,15 +234,15 @@ export default async function Home() {
                 </span>
               ))}
             </h1>
-            <p className="text-gray-300 text-sm md:text-base mb-7 line-clamp-2 max-w-xl animate-fade-up" style={{ animationDelay: '0.55s', opacity: 0, animationFillMode: 'forwards' }}>{featured.description}</p>
-            <div className="flex gap-3 flex-wrap animate-fade-up" style={{ animationDelay: '0.7s', opacity: 0, animationFillMode: 'forwards' }}>
-              <Link href={"/watch/" + featured.id} className="btn-shimmer inline-flex items-center gap-2 bg-white text-black font-bold px-7 py-3 rounded-xl hover:bg-gray-100 transition-all duration-150 text-sm shadow-lg shadow-black/30">
+            <p className="hidden md:block text-gray-300 text-sm md:text-base mb-7 line-clamp-2 max-w-xl animate-fade-up" style={{ animationDelay: '0.55s', opacity: 0, animationFillMode: 'forwards' }}>{featured.description}</p>
+            <div className="flex gap-2 md:gap-3 animate-fade-up" style={{ animationDelay: '0.5s', opacity: 0, animationFillMode: 'forwards' }}>
+              <Link href={"/watch/" + featured.id} className="btn-shimmer inline-flex items-center gap-2 bg-white text-black font-bold px-5 md:px-7 py-2.5 md:py-3 rounded-xl hover:bg-gray-100 transition-all duration-150 text-sm shadow-lg shadow-black/30">
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 ml-0.5">
                   <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                 </svg>
                 Watch Now
               </Link>
-              <Link href={"/watch/" + featured.id} className="inline-flex items-center gap-2 bg-white/10 text-white font-semibold px-7 py-3 rounded-xl hover:bg-white/20 transition-all duration-150 text-sm backdrop-blur-sm border border-white/10">
+              <Link href={"/watch/" + featured.id} className="inline-flex items-center gap-2 bg-white/10 text-white font-semibold px-5 md:px-7 py-2.5 md:py-3 rounded-xl hover:bg-white/20 transition-all duration-150 text-sm backdrop-blur-sm border border-white/10">
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
                 </svg>

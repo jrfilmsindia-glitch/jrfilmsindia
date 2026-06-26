@@ -34,7 +34,7 @@ export default function LikeButton({ videoId }: { videoId: string }) {
   return (
     <button
       onClick={toggle}
-      className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm transition-all duration-150 ${
+      className={`flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 md:px-5 py-2.5 rounded-full font-medium text-sm transition-all duration-150 ${
         liked
           ? 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30'
           : 'bg-white/8 text-gray-300 border border-white/10 hover:bg-white/15 hover:text-white'

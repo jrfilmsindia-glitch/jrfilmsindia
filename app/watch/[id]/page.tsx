@@ -119,7 +119,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         category={video.category || ''}
       />
       <Navbar />
-      <div className="pt-20 px-6 md:px-12 pb-12">
+      <div className="pt-16 md:pt-20 px-3 md:px-12 pb-12">
         <div className="flex gap-8 max-w-7xl mx-auto">
           {/* Main content */}
           <div className="flex-1 min-w-0">
@@ -163,19 +163,19 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {/* Action buttons */}
-            <div className="flex flex-wrap gap-3 mt-5">
+            <div className="flex gap-2 md:gap-3 mt-4 md:mt-5 overflow-x-auto scrollbar-hide pb-1">
               {nextEpisode ? (
                 <Link
                   href={`/watch/${nextEpisode.id}`}
-                  className="inline-flex items-center gap-2 bg-purple-500 text-black font-bold px-5 py-2.5 rounded-full hover:bg-purple-400 transition text-sm"
+                  className="flex-shrink-0 inline-flex items-center gap-2 bg-purple-500 text-black font-bold px-4 md:px-5 py-2.5 rounded-full hover:bg-purple-400 transition text-sm"
                 >
                   <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                     <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                   </svg>
-                  Next Episode
+                  Next Ep
                 </Link>
               ) : (
-                <span className="inline-flex items-center gap-2 bg-white/8 text-gray-400 px-5 py-2.5 rounded-full text-sm border border-white/10">
+                <span className="flex-shrink-0 inline-flex items-center gap-2 bg-white/8 text-gray-400 px-4 md:px-5 py-2.5 rounded-full text-sm border border-white/10">
                   <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                     <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                   </svg>
@@ -198,7 +198,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                       href={`/watch/${ep.id}`}
                       className={`flex gap-4 p-3 rounded-xl transition ${ep.id === video.id ? 'bg-[#1a1020] ring-1 ring-purple-500/60' : 'bg-[#120d18] hover:bg-[#1a1020]'}`}
                     >
-                      <div className="relative w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
+                      <div className="relative w-24 h-14 md:w-32 md:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
                         {ep.thumbnail_url && (
                           <Image src={ep.thumbnail_url} alt={ep.title} fill className="object-cover" sizes="128px" />
                         )}

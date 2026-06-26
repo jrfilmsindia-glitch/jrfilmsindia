@@ -7,10 +7,10 @@ export default function Footer() {
       {/* Top gradient border */}
       <div className="h-px bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 
-      <div className="bg-gradient-to-b from-[#0d0a14] to-black px-6 md:px-16 py-12">
+      <div className="bg-gradient-to-b from-[#0d0a14] to-black px-5 md:px-16 py-10 md:py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-10">
-            {/* Brand */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mb-8 md:mb-10">
+            {/* Brand — full width on mobile */}
             <div className="col-span-2 md:col-span-1">
               <div className="mb-4">
                 <Image src="/jrf-logo.png" alt="JR Films" width={120} height={76} className="h-10 w-auto object-contain" />

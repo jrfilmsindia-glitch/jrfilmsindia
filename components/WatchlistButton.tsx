@@ -22,10 +22,10 @@ export default function WatchlistButton({ videoId }: { videoId: string }) {
   return (
     <button
       onClick={toggleWatchlist}
-      className={`font-bold px-6 py-3 rounded-lg transition ${
+      className={`flex-shrink-0 inline-flex items-center gap-1.5 font-semibold px-3.5 md:px-5 py-2.5 rounded-full text-sm transition ${
         inWatchlist
-          ? 'bg-purple-500 text-black hover:bg-purple-400'
-          : 'bg-gray-800 text-white hover:bg-gray-700'
+          ? 'bg-purple-500/20 text-purple-400 border border-purple-500/40 hover:bg-purple-500/30'
+          : 'bg-white/8 text-gray-300 border border-white/10 hover:bg-white/15 hover:text-white'
       }`}
     >
       {inWatchlist ? '✓ In Watchlist' : '+ Watchlist'}
