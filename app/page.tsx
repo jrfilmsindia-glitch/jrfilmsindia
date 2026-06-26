@@ -11,6 +11,21 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, pr
 
 export const revalidate = 0
 
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
+
+function isNew(createdAt: string) {
+  return Date.now() - new Date(createdAt).getTime() < SEVEN_DAYS_MS
+}
+
+function CardSkeleton() {
+  return (
+    <div className="flex-shrink-0 w-[200px] md:w-[220px] animate-pulse">
+      <div className="aspect-video bg-white/5 rounded-xl" />
+      <div className="h-2.5 bg-white/5 rounded mt-2 w-3/4" />
+    </div>
+  )
+}
+
 function LandscapeRow({ title, videos, seeAllHref, accent }: { title: string, videos: any[], seeAllHref?: string, accent: 'purple' | 'pink' }) {
   if (!videos.length) return null
   const ringColor = accent === 'purple' ? 'group-hover:ring-purple-500/60' : 'group-hover:ring-pink-500/60'
@@ -33,8 +48,14 @@ function LandscapeRow({ title, videos, seeAllHref, accent }: { title: string, vi
             <div className={`relative aspect-video bg-[#1a1020] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 ${ringColor} transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
               {video.thumbnail_url
                 ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="220px" />
-                : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
+                : <CardSkeleton />
               }
+              {/* NEW badge */}
+              {video.created_at && isNew(video.created_at) && (
+                <div className="absolute top-1.5 left-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wide uppercase">
+                  New
+                </div>
+              )}
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
                 <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 scale-75 group-hover:scale-100 shadow-lg">

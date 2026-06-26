@@ -96,7 +96,22 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
   const relatedVideos = relatedData || []
 
   return (
-    <main className="min-h-screen bg-[#0a0710]">
+    <main className="min-h-screen bg-[#0a0710] relative overflow-hidden">
+      {/* Cinematic blur background */}
+      {video.thumbnail_url && (
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <Image
+            src={video.thumbnail_url}
+            alt=""
+            fill
+            className="object-cover opacity-[0.07] blur-3xl scale-110"
+            sizes="100vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710]/60 via-[#0a0710]/80 to-[#0a0710]" />
+        </div>
+      )}
+      <div className="relative z-10">
       <ViewTracker
         videoId={String(video.id)}
         title={video.title}
@@ -254,6 +269,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             </div>
           </div>
         )}
+      </div>
       </div>
     </main>
   )
