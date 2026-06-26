@@ -33,6 +33,7 @@ export default function Navbar() {
     { href: '/browse', label: 'Browse' },
     { href: '/series', label: 'Series' },
     { href: '/shorts', label: 'Shorts' },
+    { href: '/watchlist', label: 'Watchlist' },
   ]
 
   return (

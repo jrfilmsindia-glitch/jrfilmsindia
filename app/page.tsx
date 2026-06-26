@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import SocialStats from '@/components/SocialStats'
 import FadeInSection from '@/components/FadeInSection'
+import RecentlyWatched from '@/components/RecentlyWatched'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
@@ -232,6 +233,7 @@ export default async function Home() {
       )}
 
       <FadeInSection><SocialStats /></FadeInSection>
+      <RecentlyWatched />
       <div className="pt-8 pb-2">
         <FadeInSection delay={0}>
           <div className="px-6 md:px-12 mb-1">
