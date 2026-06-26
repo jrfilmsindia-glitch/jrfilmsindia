@@ -1,31 +1,38 @@
-import { createClient } from '@supabase/supabase-js'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.SUPABASE_SECRET_KEY as string
-)
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const id = body?.id;
 
-export async function POST(req: Request) {
-  const { id } = await req.json()
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+    }
 
-  const { data: video, error: fetchError } = await supabase
-    .from('videos')
-    .select('view_count')
-    .eq('id', id)
-    .single()
+    // Attempt atomic DB-side increment via RPC (requires the function to exist in Supabase).
+    // Run this once in the Supabase SQL editor to create it:
+    //   CREATE OR REPLACE FUNCTION increment_view_count(video_id uuid)
+    //   RETURNS void AS $$
+    //     UPDATE videos SET view_count = view_count + 1 WHERE id = video_id;
+    //   $$ LANGUAGE sql;
+    const { error: rpcError } = await supabaseAdmin.rpc('increment_view_count', { video_id: id });
 
-  if (fetchError) return NextResponse.json({ error: fetchError.message }, { status: 500 })
+    if (rpcError) {
+      // Fallback: read-then-write (not atomic, but better than nothing if RPC is absent)
+      const { data } = await supabaseAdmin
+        .from('videos')
+        .select('view_count')
+        .eq('id', id)
+        .single();
+      await supabaseAdmin
+        .from('videos')
+        .update({ view_count: (data?.view_count ?? 0) + 1 })
+        .eq('id', id);
+    }
 
-  const newCount = (video?.view_count || 0) + 1
-
-  const { error: updateError } = await supabase
-    .from('videos')
-    .update({ view_count: newCount })
-    .eq('id', id)
-
-  if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 })
-
-  return NextResponse.json({ view_count: newCount })
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
 }

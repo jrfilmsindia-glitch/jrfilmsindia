@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import ViewTracker from '@/components/ViewTracker'
 import ShareButton from '@/components/ShareButton'
+import WatchlistButton from '@/components/WatchlistButton'
 import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 
@@ -112,7 +114,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             ) : (
               <button className="bg-purple-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-purple-400 transition">▶ Play</button>
             )}
-            <button className="bg-gray-800 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 transition">+ Watchlist</button>
+            <WatchlistButton videoId={String(video.id)} />
             <ShareButton title={video.title} url={`https://jrfilmsindia.com/watch/${video.id}`} />
           </div>
 
@@ -127,7 +129,9 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                     className={`flex gap-4 p-3 rounded-lg transition ${ep.id === video.id ? 'bg-gray-800 ring-1 ring-purple-500' : 'bg-gray-900 hover:bg-gray-800'}`}
                   >
                     <div className="relative w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
-                      {ep.thumbnail_url && <img src={ep.thumbnail_url} alt={ep.title} className="w-full h-full object-cover" />}
+                      {ep.thumbnail_url && (
+                        <Image src={ep.thumbnail_url} alt={ep.title} fill className="object-cover" sizes="128px" />
+                      )}
                       <span className="absolute top-1 left-1 bg-purple-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
                         EP {ep.episode_number}
                       </span>

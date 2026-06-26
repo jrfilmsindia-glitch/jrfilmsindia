@@ -22,15 +22,31 @@ export default function SplashScreen() {
     }
   }, [])
 
+  function skip() {
+    setFadeOut(true)
+    setTimeout(() => {
+      setShow(false)
+      sessionStorage.setItem('jrf_splash_shown', 'true')
+    }, 300)
+  }
+
   if (!show) return null
 
   return (
-    <div className={`fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+    <div
+      className={`fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+    >
       <img
         src="/jrf-logo.png"
         alt="JR Films"
         className="w-[80vw] max-w-[420px] object-contain animate-pulse"
       />
+      <button
+        onClick={skip}
+        className="absolute bottom-8 right-8 text-gray-500 text-sm hover:text-white transition"
+      >
+        Skip →
+      </button>
     </div>
   )
 }
