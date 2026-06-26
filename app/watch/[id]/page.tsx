@@ -4,6 +4,8 @@ import Navbar from '@/components/Navbar'
 import ViewTracker from '@/components/ViewTracker'
 import ShareButton from '@/components/ShareButton'
 import WatchlistButton from '@/components/WatchlistButton'
+import LikeButton from '@/components/LikeButton'
+import AutoPlayNext from '@/components/AutoPlayNext'
 import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 
@@ -81,71 +83,177 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
     }
   }
 
+  // Fetch related videos from same category (excluding current)
+  const { data: relatedData } = await supabase
+    .from('videos')
+    .select('id, title, thumbnail_url, view_count, category')
+    .eq('category', video.category)
+    .eq('visibility', 'public')
+    .neq('id', video.id)
+    .order('view_count', { ascending: false })
+    .limit(6)
+
+  const relatedVideos = relatedData || []
+
   return (
-    <main className="min-h-screen bg-black">
-      <ViewTracker videoId={String(video.id)} />
+    <main className="min-h-screen bg-[#0a0710]">
+      <ViewTracker
+        videoId={String(video.id)}
+        title={video.title}
+        thumbnail={video.thumbnail_url || ''}
+        category={video.category || ''}
+      />
       <Navbar />
-      <div className="pt-20 px-6 md:px-16 pb-12">
-        <div className="max-w-3xl mx-auto">
-          <div className="aspect-video w-full rounded-xl overflow-hidden">
-            <iframe
-              width="100%"
-              height="100%"
-              src={`https://www.youtube.com/embed/${video.youtube_id}`}
-              title={video.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <div className="mt-6">
-            <div className="flex items-center gap-3">
-              <h1 className="text-white text-2xl font-bold">{video.title}</h1>
+      <div className="pt-20 px-6 md:px-12 pb-12">
+        <div className="flex gap-8 max-w-7xl mx-auto">
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            {/* Player */}
+            <div className="aspect-video w-full rounded-xl overflow-hidden bg-black">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${video.youtube_id}`}
+                title={video.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
             </div>
-            <p className="text-purple-500 text-sm mt-1">
-              {video.category} {video.series_name && `· ${video.series_name} · Episode ${video.episode_number}`} · {formatViews(video.view_count || 0)} views
-            </p>
-            <p className="text-gray-400 text-sm mt-3 leading-relaxed">{video.description}</p>
-          </div>
-          <div className="flex gap-4 mt-6">
-            {nextEpisode ? (
-              <Link href={`/watch/${nextEpisode.id}`} className="bg-purple-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-purple-400 transition">
-                ▶ Next Episode
-              </Link>
-            ) : (
-              <button className="bg-purple-500 text-black font-bold px-6 py-3 rounded-lg hover:bg-purple-400 transition">▶ Play</button>
+
+            {/* Auto play next */}
+            {nextEpisode && (
+              <AutoPlayNext
+                nextEpisodeId={String(nextEpisode.id)}
+                nextEpisodeTitle={nextEpisode.title}
+              />
             )}
-            <WatchlistButton videoId={String(video.id)} />
-            <ShareButton title={video.title} url={`https://jrfilmsindia.com/watch/${video.id}`} />
+
+            {/* Title & meta */}
+            <div className="mt-5">
+              {/* Category badge */}
+              <span className="inline-block bg-purple-500/20 text-purple-400 text-[11px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md mb-3">
+                {video.category}
+                {video.series_name && ` · ${video.series_name} · EP ${video.episode_number}`}
+              </span>
+              <h1 className="text-white text-2xl md:text-3xl font-bold leading-snug">{video.title}</h1>
+              {/* View count */}
+              <div className="flex items-center gap-1.5 mt-2 text-gray-400 text-sm">
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-gray-500">
+                  <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                  <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41z" clipRule="evenodd" />
+                </svg>
+                <span>{formatViews(video.view_count || 0)} views</span>
+              </div>
+              <p className="text-gray-400 text-sm mt-3 leading-relaxed">{video.description}</p>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex flex-wrap gap-3 mt-5">
+              {nextEpisode ? (
+                <Link
+                  href={`/watch/${nextEpisode.id}`}
+                  className="inline-flex items-center gap-2 bg-purple-500 text-black font-bold px-5 py-2.5 rounded-full hover:bg-purple-400 transition text-sm"
+                >
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                  </svg>
+                  Next Episode
+                </Link>
+              ) : (
+                <span className="inline-flex items-center gap-2 bg-white/8 text-gray-400 px-5 py-2.5 rounded-full text-sm border border-white/10">
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                  </svg>
+                  Playing
+                </span>
+              )}
+              <LikeButton videoId={String(video.id)} />
+              <WatchlistButton videoId={String(video.id)} />
+              <ShareButton title={video.title} url={`https://jrfilmsindia.com/watch/${video.id}`} />
+            </div>
+
+            {/* Episodes list */}
+            {episodes.length > 0 && (
+              <div className="mt-10">
+                <h2 className="text-white text-lg font-bold mb-4">More Episodes — {video.series_name}</h2>
+                <div className="space-y-3">
+                  {episodes.map((ep) => (
+                    <Link
+                      key={ep.id}
+                      href={`/watch/${ep.id}`}
+                      className={`flex gap-4 p-3 rounded-xl transition ${ep.id === video.id ? 'bg-[#1a1020] ring-1 ring-purple-500/60' : 'bg-[#120d18] hover:bg-[#1a1020]'}`}
+                    >
+                      <div className="relative w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
+                        {ep.thumbnail_url && (
+                          <Image src={ep.thumbnail_url} alt={ep.title} fill className="object-cover" sizes="128px" />
+                        )}
+                        <span className="absolute top-1 left-1 bg-purple-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
+                          EP {ep.episode_number}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium line-clamp-2">{ep.title}</p>
+                        {ep.id === video.id && <p className="text-purple-400 text-xs mt-1">Now Playing</p>}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {episodes.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-white text-lg font-bold mb-4">More Episodes — {video.series_name}</h2>
+          {/* Related videos sidebar — desktop only */}
+          <div className="hidden lg:block w-80 flex-shrink-0">
+            <h2 className="text-white text-base font-semibold mb-4">Related Videos</h2>
+            {relatedVideos.length === 0 ? (
+              <p className="text-gray-500 text-sm">No related videos found.</p>
+            ) : (
               <div className="space-y-3">
-                {episodes.map((ep) => (
-                  <Link
-                    key={ep.id}
-                    href={`/watch/${ep.id}`}
-                    className={`flex gap-4 p-3 rounded-lg transition ${ep.id === video.id ? 'bg-gray-800 ring-1 ring-purple-500' : 'bg-gray-900 hover:bg-gray-800'}`}
-                  >
-                    <div className="relative w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
-                      {ep.thumbnail_url && (
-                        <Image src={ep.thumbnail_url} alt={ep.title} fill className="object-cover" sizes="128px" />
+                {relatedVideos.map((rv) => (
+                  <Link key={rv.id} href={`/watch/${rv.id}`} className="flex gap-3 group">
+                    <div className="relative w-36 h-[76px] flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
+                      {rv.thumbnail_url && (
+                        <Image src={rv.thumbnail_url} alt={rv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="144px" />
                       )}
-                      <span className="absolute top-1 left-1 bg-purple-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
-                        EP {ep.episode_number}
-                      </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium line-clamp-2">{ep.title}</p>
-                      {ep.id === video.id && <p className="text-purple-500 text-xs mt-1">Now Playing</p>}
+                      <p className="text-white text-xs font-medium line-clamp-2 group-hover:text-purple-300 transition-colors">{rv.title}</p>
+                      <div className="flex items-center gap-1 mt-1 text-gray-500 text-[11px]">
+                        <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                          <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                          <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41z" clipRule="evenodd" />
+                        </svg>
+                        {formatViews(rv.view_count || 0)} views
+                      </div>
                     </div>
                   </Link>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+
+            {/* Mobile: related videos below episodes (rendered inside main col) */}
+          </div>
         </div>
+
+        {/* Mobile related videos — shown below everything on small screens */}
+        {relatedVideos.length > 0 && (
+          <div className="lg:hidden max-w-7xl mx-auto mt-10">
+            <h2 className="text-white text-base font-semibold mb-4">Related Videos</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {relatedVideos.map((rv) => (
+                <Link key={rv.id} href={`/watch/${rv.id}`} className="group">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800">
+                    {rv.thumbnail_url && (
+                      <Image src={rv.thumbnail_url} alt={rv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="200px" />
+                    )}
+                  </div>
+                  <p className="text-white text-xs font-medium mt-2 line-clamp-2 group-hover:text-purple-300 transition-colors">{rv.title}</p>
+                  <p className="text-gray-500 text-[11px] mt-0.5">{formatViews(rv.view_count || 0)} views</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )
