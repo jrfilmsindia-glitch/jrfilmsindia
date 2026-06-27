@@ -34,6 +34,7 @@ export default function Navbar() {
     { href: '/series', label: 'Series' },
     { href: '/shorts', label: 'Shorts' },
     { href: '/watchlist', label: 'Watchlist' },
+    { href: '/team', label: 'Team' },
   ]
 
   return (
