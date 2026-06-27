@@ -14,9 +14,11 @@ export async function GET(request: Request) {
   }
 
   const snippet = data.items[0].snippet
+  const t = snippet.thumbnails
+  const thumbnail = t.maxres?.url || t.standard?.url || t.high?.url || t.medium?.url || t.default?.url || null
   return NextResponse.json({
     title: snippet.title,
     description: snippet.description,
-    thumbnail: snippet.thumbnails.maxres?.url || snippet.thumbnails.high?.url
+    thumbnail,
   })
 }

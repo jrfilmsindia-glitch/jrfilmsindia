@@ -2,13 +2,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || ''
-const EDITOR_PASSWORD = process.env.NEXT_PUBLIC_EDITOR_PASSWORD || ''
-
 export default function AdminPage() {
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<'admin' | 'editor' | null>(null)
+  const [error, setError] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [youtubeUrl, setYoutubeUrl] = useState('')
@@ -26,15 +24,20 @@ export default function AdminPage() {
     if (savedRole === 'admin' || savedRole === 'editor') setRole(savedRole)
   }, [])
 
-  function tryLogin() {
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem('jrfilms_role', 'admin')
-      router.push('/admin/dashboard')
-    } else if (password === EDITOR_PASSWORD) {
-      sessionStorage.setItem('jrfilms_role', 'editor')
+  async function tryLogin() {
+    setError('')
+    const res = await fetch('/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    const data = await res.json()
+    if (data.ok) {
+      sessionStorage.setItem('jrfilms_role', data.role)
       router.push('/admin/dashboard')
     } else {
       setPassword('')
+      setError('Invalid password')
     }
   }
 
@@ -124,6 +127,7 @@ export default function AdminPage() {
           >
             Login
           </button>
+          {error && <p className="text-red-400 text-sm text-center mt-2">{error}</p>}
         </div>
       </main>
     )

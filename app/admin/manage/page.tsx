@@ -11,19 +11,27 @@ export default function ManageVideos() {
   const [editSeriesName, setEditSeriesName] = useState('')
   const [editEpisodeNumber, setEditEpisodeNumber] = useState('')
   const [editOrientation, setEditOrientation] = useState('landscape')
+  const [editThumbnail, setEditThumbnail] = useState('')
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
     const savedRole = sessionStorage.getItem('jrfilms_role')
-    if (savedRole === 'admin' || savedRole === 'editor') setRole(savedRole)
+    if (savedRole === 'admin' || savedRole === 'editor') setRole(savedRole as 'admin' | 'editor')
+    setAuthChecked(true)
     loadVideos()
   }, [])
 
   async function loadVideos() {
     setLoading(true)
-    const res = await fetch('/api/list-videos')
-    const data = await res.json()
-    setVideos(data.data || [])
+    try {
+      const res = await fetch('/api/list-videos')
+      const data = await res.json()
+      setVideos(data.data || [])
+    } catch (e) {
+      console.error('Failed to load videos', e)
+    }
     setLoading(false)
   }
 
@@ -35,19 +43,30 @@ export default function ManageVideos() {
     setEditSeriesName(video.series_name || '')
     setEditEpisodeNumber(video.episode_number?.toString() || '')
     setEditOrientation(video.orientation || 'landscape')
+    setEditThumbnail(video.thumbnail_url || '')
   }
 
   async function saveEdit(id: number) {
-    await fetch('/api/update-video', {
+    setSaveError('')
+    const res = await fetch('/api/update-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id, title: editTitle, description: editDescription, category: editCategory,
+        id,
+        title: editTitle,
+        description: editDescription,
+        category: editCategory,
         series_name: editCategory === 'series' ? editSeriesName : null,
         episode_number: editCategory === 'series' && editEpisodeNumber ? parseInt(editEpisodeNumber) : null,
-        orientation: editCategory === 'shorts' ? 'vertical' : editOrientation
+        orientation: editCategory === 'shorts' ? 'vertical' : editOrientation,
+        thumbnail_url: editThumbnail || null,
       })
     })
+    const data = await res.json()
+    if (data.error) {
+      setSaveError(typeof data.error === 'string' ? data.error : 'Save failed')
+      return
+    }
     setEditingId(null)
     loadVideos()
   }
@@ -71,6 +90,8 @@ export default function ManageVideos() {
     loadVideos()
   }
 
+  if (!authChecked || loading) return <main className="min-h-screen bg-black text-white p-8">Loading...</main>
+
   if (!role) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center">
@@ -78,8 +99,6 @@ export default function ManageVideos() {
       </main>
     )
   }
-
-  if (loading) return <main className="min-h-screen bg-black text-white p-8">Loading...</main>
 
   return (
     <main className="min-h-screen bg-black p-6">
@@ -97,10 +116,29 @@ export default function ManageVideos() {
       <div className="space-y-3">
         {videos.map((video) => (
           <div key={video.id} className="bg-gray-900 rounded-lg p-4 flex gap-4">
-            <img src={video.thumbnail_url} alt="" className="w-32 h-20 object-cover rounded flex-shrink-0 bg-gray-800" />
+            <img
+              src={video.thumbnail_url}
+              alt=""
+              className={`object-cover rounded flex-shrink-0 bg-gray-800 ${video.orientation === 'vertical' ? 'w-12 h-20' : 'w-32 h-20'}`}
+            />
             
             {editingId === video.id ? (
               <div className="flex-1 space-y-2">
+                <div>
+                  <input
+                    className="w-full bg-gray-800 text-white p-2 rounded text-sm"
+                    value={editThumbnail}
+                    onChange={e => setEditThumbnail(e.target.value)}
+                    placeholder="Thumbnail URL (paste image URL)"
+                  />
+                  {editThumbnail && (
+                    <img
+                      src={editThumbnail}
+                      alt="preview"
+                      className={`mt-1.5 object-cover rounded bg-gray-800 ${editOrientation === 'vertical' ? 'w-20 h-32' : 'w-32 h-20'}`}
+                    />
+                  )}
+                </div>
                 <input
                   className="w-full bg-gray-800 text-white p-2 rounded text-sm"
                   value={editTitle}
@@ -162,9 +200,10 @@ export default function ManageVideos() {
                   </>
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <button onClick={() => saveEdit(video.id)} className="bg-purple-500 text-black px-4 py-1.5 rounded text-sm font-semibold">Save</button>
-                  <button onClick={() => setEditingId(null)} className="bg-gray-700 text-white px-4 py-1.5 rounded text-sm">Cancel</button>
+                  <button onClick={() => { setEditingId(null); setSaveError('') }} className="bg-gray-700 text-white px-4 py-1.5 rounded text-sm">Cancel</button>
+                  {saveError && <span className="text-red-400 text-xs">{saveError}</span>}
                 </div>
               </div>
             ) : (

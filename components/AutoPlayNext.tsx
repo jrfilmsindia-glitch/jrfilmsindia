@@ -1,6 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 interface AutoPlayNextProps {
   nextEpisodeId: string
@@ -8,48 +7,21 @@ interface AutoPlayNextProps {
 }
 
 export default function AutoPlayNext({ nextEpisodeId, nextEpisodeTitle }: AutoPlayNextProps) {
-  const router = useRouter()
-  const [countdown, setCountdown] = useState(5)
-  const [cancelled, setCancelled] = useState(false)
-
-  useEffect(() => {
-    if (cancelled) return
-    if (countdown <= 0) {
-      router.push(`/watch/${nextEpisodeId}`)
-      return
-    }
-    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000)
-    return () => clearTimeout(timer)
-  }, [countdown, cancelled, nextEpisodeId, router])
-
-  if (cancelled) return null
-
-  const progress = ((5 - countdown) / 5) * 100
-
   return (
-    <div className="mt-4 rounded-xl bg-[#1a1020] border border-white/10 p-4">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <p className="text-gray-400 text-xs uppercase tracking-widest mb-0.5">Up Next</p>
-          <p className="text-white text-sm font-medium line-clamp-1">{nextEpisodeTitle}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400 text-sm font-bold tabular-nums">{countdown}s</span>
-          <button
-            onClick={() => setCancelled(true)}
-            className="text-gray-500 hover:text-white text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition"
-          >
-            Cancel
-          </button>
-        </div>
+    <div className="mt-4 rounded-xl bg-[#1a1020] border border-white/10 p-4 flex items-center justify-between gap-4">
+      <div>
+        <p className="text-gray-400 text-xs uppercase tracking-widest mb-0.5">Up Next</p>
+        <p className="text-white text-sm font-medium line-clamp-1">{nextEpisodeTitle}</p>
       </div>
-      {/* Progress bar */}
-      <div className="h-0.5 bg-white/10 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-purple-500 transition-all duration-1000 ease-linear"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      <Link
+        href={`/watch/${nextEpisodeId}`}
+        className="flex-shrink-0 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5"
+      >
+        Next
+        <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
+          <path fillRule="evenodd" d="M6.22 4.22a.75.75 0 011.06 0l3.25 3.25a.75.75 0 010 1.06l-3.25 3.25a.75.75 0 01-1.06-1.06L9.19 8 6.22 5.03a.75.75 0 010-1.06z" clipRule="evenodd"/>
+        </svg>
+      </Link>
     </div>
   )
 }

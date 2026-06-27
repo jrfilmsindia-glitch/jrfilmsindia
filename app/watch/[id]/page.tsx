@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import Navbar from '@/components/Navbar'
+import VideoThumbnail from '@/components/VideoThumbnail'
 import ViewTracker from '@/components/ViewTracker'
 import ShareButton from '@/components/ShareButton'
 import WatchlistButton from '@/components/WatchlistButton'
@@ -117,6 +118,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         title={video.title}
         thumbnail={video.thumbnail_url || ''}
         category={video.category || ''}
+        orientation={video.orientation || 'landscape'}
       />
       <Navbar />
       <div className="pt-16 md:pt-20 px-3 md:px-12 pb-12">
@@ -199,9 +201,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                       className={`flex gap-4 p-3 rounded-xl transition ${ep.id === video.id ? 'bg-[#1a1020] ring-1 ring-purple-500/60' : 'bg-[#120d18] hover:bg-[#1a1020]'}`}
                     >
                       <div className="relative w-24 h-14 md:w-32 md:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
-                        {ep.thumbnail_url && (
-                          <Image src={ep.thumbnail_url} alt={ep.title} fill className="object-cover" sizes="128px" />
-                        )}
+                        <VideoThumbnail src={ep.thumbnail_url} alt={ep.title} fill sizes="128px" category="series" />
                         <span className="absolute top-1 left-1 bg-purple-500 text-black text-xs font-bold px-1.5 py-0.5 rounded">
                           EP {ep.episode_number}
                         </span>
@@ -227,9 +227,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                 {relatedVideos.map((rv) => (
                   <Link key={rv.id} href={`/watch/${rv.id}`} className="flex gap-3 group">
                     <div className="relative w-36 h-[76px] flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
-                      {rv.thumbnail_url && (
-                        <Image src={rv.thumbnail_url} alt={rv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="144px" />
-                      )}
+                      <VideoThumbnail src={rv.thumbnail_url} alt={rv.title} fill sizes="144px" category={rv.category} className="object-cover group-hover:scale-105 transition-transform duration-200" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-xs font-medium line-clamp-2 group-hover:text-purple-300 transition-colors">{rv.title}</p>
@@ -258,9 +256,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
               {relatedVideos.map((rv) => (
                 <Link key={rv.id} href={`/watch/${rv.id}`} className="group">
                   <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800">
-                    {rv.thumbnail_url && (
-                      <Image src={rv.thumbnail_url} alt={rv.title} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="200px" />
-                    )}
+                    <VideoThumbnail src={rv.thumbnail_url} alt={rv.title} fill sizes="200px" category={rv.category} className="object-cover group-hover:scale-105 transition-transform duration-200" />
                   </div>
                   <p className="text-white text-xs font-medium mt-2 line-clamp-2 group-hover:text-purple-300 transition-colors">{rv.title}</p>
                   <p className="text-gray-500 text-[11px] mt-0.5">{formatViews(rv.view_count || 0)} views</p>

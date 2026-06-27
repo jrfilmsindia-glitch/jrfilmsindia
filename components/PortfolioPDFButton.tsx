@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
+
 function formatViews(count: number) {
   if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
   if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
@@ -14,86 +15,43 @@ export default function PortfolioPDFButton() {
   const [progress, setProgress] = useState('')
   const [pdfData, setPdfData] = useState<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
 
   async function generatePDF() {
     setGenerating(true)
-    setProgress('Fetching content...')
+    setProgress('Fetching data...')
 
-    const res = await fetch('/api/portfolio-data')
-    const data = await res.json()
-    setPdfData(data)
-    await new Promise(r => setTimeout(r, 400))
-
-    const coverPages = containerRef.current?.querySelectorAll('.pdf-page')
-    if (!coverPages || coverPages.length === 0) {
-      setGenerating(false)
-      return
-    }
-
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
-
-    // Render cover + about pages
-    for (let i = 0; i < coverPages.length; i++) {
-      setProgress(`Rendering page ${i + 1} of ${coverPages.length}...`)
-      const pageEl = coverPages[i] as HTMLElement
-      const canvas = await html2canvas(pageEl, { scale: 2, useCORS: true, backgroundColor: null, logging: false })
-      const imgData = canvas.toDataURL('image/jpeg', 0.92)
-      if (i > 0) doc.addPage()
-      doc.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight)
-    }
-
-    // Load homepage into hidden iframe and capture it
-    setProgress('Loading homepage...')
-    await new Promise<void>((resolve) => {
-      const iframe = iframeRef.current
-      if (!iframe) { resolve(); return }
-      iframe.onload = () => resolve()
-      iframe.src = '/'
-    })
-
-    await new Promise(r => setTimeout(r, 1500)) // let images/fonts settle
-
-    setProgress('Capturing homepage...')
     try {
-      const iframeDoc = iframeRef.current?.contentDocument
-      const iframeMain = iframeDoc?.querySelector('main')
+      const res = await fetch('/api/portfolio-data')
+      const data = await res.json()
+      setPdfData(data)
 
-      if (iframeMain) {
-        const homeCanvas = await html2canvas(iframeMain as HTMLElement, {
-          useCORS: true,
-          scale: 1.3,
-          backgroundColor: '#0a0710',
-          windowWidth: (iframeMain as HTMLElement).scrollWidth,
-          windowHeight: (iframeMain as HTMLElement).scrollHeight,
-        })
+      await new Promise(r => setTimeout(r, 500))
 
-        const imgWidth = pageWidth
-        const imgHeight = (homeCanvas.height * imgWidth) / homeCanvas.width
-        const homeImgData = homeCanvas.toDataURL('image/jpeg', 0.9)
-
-        let heightLeft = imgHeight
-        let position = 0
-
-        doc.addPage()
-        doc.addImage(homeImgData, 'JPEG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-
-        while (heightLeft > 0) {
-          position -= pageHeight
-          doc.addPage()
-          doc.addImage(homeImgData, 'JPEG', 0, position, imgWidth, imgHeight)
-          heightLeft -= pageHeight
-        }
+      const coverPages = containerRef.current?.querySelectorAll('.pdf-page')
+      if (!coverPages || coverPages.length === 0) {
+        setGenerating(false)
+        return
       }
+
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const pageHeight = doc.internal.pageSize.getHeight()
+
+      for (let i = 0; i < coverPages.length; i++) {
+        setProgress(`Rendering page ${i + 1} of ${coverPages.length}...`)
+        const pageEl = coverPages[i] as HTMLElement
+        const canvas = await html2canvas(pageEl, { scale: 2, useCORS: true, backgroundColor: null, logging: false })
+        const imgData = canvas.toDataURL('image/jpeg', 0.92)
+        if (i > 0) doc.addPage()
+        doc.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight)
+      }
+
+      setProgress('Saving PDF...')
+      doc.save(`JR-Films-India-Portfolio-${new Date().toISOString().slice(0, 10)}.pdf`)
     } catch (e) {
-      console.error('Homepage capture failed:', e)
+      console.error('PDF generation failed:', e)
     }
 
-    setProgress('Saving PDF...')
-    doc.save(`JR-Films-India-Portfolio-${new Date().toISOString().slice(0, 10)}.pdf`)
     setGenerating(false)
     setProgress('')
     setPdfData(null)
@@ -109,7 +67,6 @@ export default function PortfolioPDFButton() {
         {generating ? (progress || 'Generating...') : '📄 Download Portfolio PDF'}
       </button>
 
-      <iframe ref={iframeRef} style={{ position: 'fixed', top: -99999, left: 0, width: '1280px', height: '4000px', border: 'none' }} />
 
       {pdfData && (
         <div ref={containerRef} style={{ position: 'fixed', top: -99999, left: 0, width: '595px' }}>

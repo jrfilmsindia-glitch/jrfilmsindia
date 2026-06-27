@@ -1,13 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import VideoThumbnail from '@/components/VideoThumbnail'
 
 interface RecentItem {
   id: string
   title: string
   thumbnail_url: string
   category: string
+  orientation: string
 }
 
 export default function RecentlyWatched() {
@@ -29,15 +30,9 @@ export default function RecentlyWatched() {
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
         {items.map((item) => (
-          <Link key={item.id} href={`/watch/${item.id}`} className="group flex-shrink-0 w-[200px] md:w-[220px]">
-            <div className="relative aspect-video bg-[#1a1020] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 group-hover:ring-purple-500/60 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60">
-              {item.thumbnail_url ? (
-                <Image src={item.thumbnail_url} alt={item.title} fill className="object-cover" sizes="220px" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-gray-600 text-xs">No thumbnail</span>
-                </div>
-              )}
+          <Link key={item.id} href={`/watch/${item.id}`} className={`group flex-shrink-0 ${item.orientation === 'vertical' ? 'w-[100px] md:w-[120px]' : 'w-[200px] md:w-[220px]'}`}>
+            <div className={`relative ${item.orientation === 'vertical' ? 'aspect-[9/16]' : 'aspect-video'} bg-[#1a1020] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 group-hover:ring-purple-500/60 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
+              <VideoThumbnail src={item.thumbnail_url} alt={item.title} fill sizes="220px" category={item.category} />
               {/* Hover play button */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
                 <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 scale-75 group-hover:scale-100 shadow-lg">

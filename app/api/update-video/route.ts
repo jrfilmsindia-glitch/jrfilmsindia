@@ -5,7 +5,7 @@ import { z } from 'zod'
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
 
 const UpdateVideoSchema = z.object({
-  id: z.string().uuid(),
+  id: z.number().int(),
   title: z.string().min(1).max(200).optional(),
   description: z.string().max(2000).optional(),
   category: z.string().min(1).max(50).optional(),
@@ -13,10 +13,11 @@ const UpdateVideoSchema = z.object({
   series_name: z.string().max(200).nullable().optional(),
   episode_number: z.number().int().positive().nullable().optional(),
   orientation: z.enum(['landscape', 'vertical']).optional(),
+  thumbnail_url: z.string().url().nullable().optional(),
 })
 
 const DeleteVideoSchema = z.object({
-  id: z.string().uuid(),
+  id: z.number().int(),
 })
 
 export async function POST(req: Request) {
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { id, title, description, category, featured, series_name, episode_number, orientation } = parsed.data
+  const { id, title, description, category, featured, series_name, episode_number, orientation, thumbnail_url } = parsed.data
 
   const updateData: Record<string, unknown> = {}
   if (title !== undefined) updateData.title = title
@@ -42,6 +43,7 @@ export async function POST(req: Request) {
   if (series_name !== undefined) updateData.series_name = series_name
   if (episode_number !== undefined) updateData.episode_number = episode_number
   if (orientation !== undefined) updateData.orientation = orientation
+  if (thumbnail_url !== undefined) updateData.thumbnail_url = thumbnail_url
 
   const { data, error } = await supabase
     .from('videos')

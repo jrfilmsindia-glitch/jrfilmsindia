@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import PortfolioPDFButton from '@/components/PortfolioPDFButton'
 
 function formatViews(count: number) {
   if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
@@ -160,7 +159,13 @@ export default function Dashboard() {
             <ExternalIcon />
             View Site
           </a>
-          <PortfolioPDFButton />
+          <a
+            href="/portfolio"
+            target="_blank"
+            className="bg-purple-500 text-black font-bold px-5 py-2.5 rounded-lg hover:bg-purple-400 transition text-sm"
+          >
+            📄 View Portfolio
+          </a>
           <button
             onClick={() => { sessionStorage.removeItem('jrfilms_role'); window.location.href = '/admin' }}
             className="text-gray-400 hover:text-white text-sm px-3 py-2"

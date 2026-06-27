@@ -10,11 +10,11 @@ export default function SplashScreen() {
     const alreadyShown = sessionStorage.getItem('jrf_splash_shown')
     if (alreadyShown) { setShow(false); return }
     setStarted(true)
-    const fadeTimer = setTimeout(() => setFadeOut(true), 2600)
+    const fadeTimer = setTimeout(() => setFadeOut(true), 1400)
     const hideTimer = setTimeout(() => {
       setShow(false)
       sessionStorage.setItem('jrf_splash_shown', 'true')
-    }, 3100)
+    }, 1900)
     return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }, [])
 

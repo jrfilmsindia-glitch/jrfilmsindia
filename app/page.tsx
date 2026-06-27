@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import Navbar from '@/components/Navbar'
+import VideoThumbnail from '@/components/VideoThumbnail'
 import Footer from '@/components/Footer'
 import SocialStats from '@/components/SocialStats'
 import FadeInSection from '@/components/FadeInSection'
@@ -44,12 +45,9 @@ function LandscapeRow({ title, videos, seeAllHref, accent }: { title: string, vi
       </div>
       <div className="flex gap-2.5 md:gap-3 overflow-x-auto scrollbar-hide pb-2">
         {videos.map((video) => (
-          <Link key={video.id} href={`/watch/${video.id}`} className="group flex-shrink-0 w-[160px] md:w-[220px]">
-            <div className={`relative aspect-video bg-[#1a1020] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 ${ringColor} transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
-              {video.thumbnail_url
-                ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="(max-width: 768px) 160px, 220px" />
-                : <CardSkeleton />
-              }
+          <Link key={video.id} href={`/watch/${video.id}`} className={`group flex-shrink-0 ${video.orientation === 'vertical' ? 'w-[90px] md:w-[120px]' : 'w-[160px] md:w-[220px]'}`}>
+            <div className={`relative ${video.orientation === 'vertical' ? 'aspect-[9/16]' : 'aspect-video'} bg-[#1a1020] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 ${ringColor} transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
+              <VideoThumbnail src={video.thumbnail_url} alt={video.title} fill sizes="(max-width: 768px) 160px, 220px" category={video.category} />
               {/* NEW badge */}
               {video.created_at && isNew(video.created_at) && (
                 <div className="absolute top-1.5 left-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-wide uppercase">
@@ -98,10 +96,7 @@ function VerticalRow({ title, videos, seeAllHref, episodeCount }: { title: strin
         {videos.map((video) => (
           <Link key={video.id} href={`/watch/${video.id}`} className="group flex-shrink-0 w-[105px] md:w-[140px]">
             <div className="relative aspect-[9/16] bg-[#1f1318] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 group-hover:ring-pink-500/60 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60">
-              {video.thumbnail_url
-                ? <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover" sizes="(max-width: 768px) 105px, 140px" />
-                : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-[10px]">No thumbnail</span></div>
-              }
+              <VideoThumbnail src={video.thumbnail_url} alt={video.title} fill sizes="(max-width: 768px) 105px, 140px" category={video.category} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
                 <div className="w-9 h-9 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 scale-75 group-hover:scale-100">
                   <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-black ml-0.5">
@@ -140,10 +135,7 @@ function SeriesPosterRow({ seriesList, accent }: { seriesList: { name: string, e
           return (
             <Link key={s.name} href={`/watch/${firstEp.id}`} className={`group flex-shrink-0 ${vertical ? 'w-[105px] md:w-[130px]' : 'w-[160px] md:w-[200px]'}`}>
               <div className={`relative ${vertical ? 'aspect-[9/16]' : 'aspect-video'} bg-[#161118] rounded-xl overflow-hidden ring-1 ring-white/5 group-hover:ring-2 ${ringColor} transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/60`}>
-                {firstEp.thumbnail_url
-                  ? <Image src={firstEp.thumbnail_url} alt={s.name} fill className="object-cover" sizes="200px" />
-                  : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
-                }
+                <VideoThumbnail src={firstEp.thumbnail_url} alt={s.name} fill sizes="200px" category="series" />
                 <div className={`absolute inset-0 bg-gradient-to-t ${gradientColor} via-transparent to-transparent`} />
                 <div className="absolute bottom-0 left-0 right-0 p-2.5">
                   <p className="text-white text-xs font-semibold truncate leading-tight">{s.name}</p>

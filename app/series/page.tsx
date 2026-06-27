@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import VideoThumbnail from '@/components/VideoThumbnail'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.SUPABASE_SECRET_KEY as string)
@@ -52,10 +53,7 @@ export default async function SeriesPage() {
                 {episodes.map((ep) => (
                   <Link key={ep.id} href={`/watch/${ep.id}`} className="group">
                     <div className={`${isVertical ? 'aspect-[9/16]' : 'aspect-video'} bg-gray-800 rounded-xl overflow-hidden group-hover:ring-2 ${ringColor} transition-all duration-200 relative`}>
-                      {ep.thumbnail_url
-                        ? <img src={ep.thumbnail_url} alt={ep.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
-                        : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
-                      }
+                      <VideoThumbnail src={ep.thumbnail_url} alt={ep.title} fill sizes="300px" category="series" className="object-cover group-hover:scale-105 transition-transform duration-200" />
                       {ep.episode_number && (
                         <span className={`absolute top-2 left-2 ${badgeColor} text-xs font-bold px-2 py-0.5 rounded`}>
                           EP {ep.episode_number}
@@ -77,10 +75,7 @@ export default async function SeriesPage() {
               {ungrouped.map((video) => (
                 <Link key={video.id} href={`/watch/${video.id}`} className="group">
                   <div className={`${video.orientation === 'vertical' ? 'aspect-[9/16]' : 'aspect-video'} bg-gray-800 rounded-xl overflow-hidden group-hover:ring-2 ring-purple-500 transition-all duration-200`}>
-                    {video.thumbnail_url
-                      ? <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
-                      : <div className="w-full h-full flex items-center justify-center"><span className="text-gray-600 text-xs">No thumbnail</span></div>
-                    }
+                    <VideoThumbnail src={video.thumbnail_url} alt={video.title} fill sizes="300px" category="series" className="object-cover group-hover:scale-105 transition-transform duration-200" />
                   </div>
                   <p className="text-white text-sm font-medium line-clamp-2 leading-snug mt-2">{video.title}</p>
                 </Link>
